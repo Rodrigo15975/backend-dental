@@ -2,6 +2,7 @@ import { Req } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { User } from '../types/type-auth';
 
 export class AuthJwt extends PassportStrategy(Strategy, 'auth-jwt') {
   constructor() {
@@ -17,7 +18,7 @@ export class AuthJwt extends PassportStrategy(Strategy, 'auth-jwt') {
     return null;
   }
 
-  async validate(user: any) {
+  async validate(user: User) {
     return user;
   }
 }
