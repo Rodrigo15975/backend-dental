@@ -3,9 +3,9 @@ export const generalValidation = {
   matchesEmail: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
   matchesDNI: /^\d{8}$/,
   matchesPhones: /^[0-9]{9}$/,
-  matchesDireccion: /[a-zA-Z].*[0-9].*|[0-9].*[a-zA-Z]/,
+  matchesDireccion: /^[\w\d\s.,()-]+$/,
   matchesRuc: /^\d{11}$/,
-  matchesLetras: /^[\sA-ZÁÉÍÓÚÜÑ]+$/i,
+  matchesLetras: /^[.\sA-ZÁÉÍÓÚÜÑ?]+$/i,
   matchesRazonSocial: /^[\w\d\s.,()-]+$/,
 };
 

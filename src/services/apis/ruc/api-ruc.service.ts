@@ -8,6 +8,7 @@ export class ApiRucService {
   private readonly urlApi: string =
     this.configService.getOrThrow('URL_API_RUC');
   constructor(private readonly configService: ConfigService) {}
+
   async getRuc(ruc: string) {
     try {
       const res = await fetch(`${this.urlApi}numero=${ruc}`, {
