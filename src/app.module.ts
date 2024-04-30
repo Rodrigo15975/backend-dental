@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
-import { RolesModule } from './modules/roles/roles.module';
 import { ConsultarioModule } from './modules/consultario/consultario.module';
-import { ApiRucModule } from './services/apis/ruc/api-ruc.module';
+import { RolesModule } from './modules/roles/roles.module';
 import { UsuariosModule } from './modules/usuarios/usuarios.module';
+import { ApiRucModule } from './services/apis/ruc/api-ruc.module';
+import { CloudinaryModule } from './services/cloudinary/cloudinary.module';
 @Module({
-  imports: [RolesModule, ConsultarioModule, ApiRucModule, UsuariosModule],
+  imports: [
+    RolesModule,
+    ConsultarioModule,
+    ApiRucModule,
+    UsuariosModule,
+    // CloudinaryModule,
+  ],
   controllers: [],
   providers: [],
 })

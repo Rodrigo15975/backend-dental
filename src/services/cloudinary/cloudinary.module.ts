@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { CloudinaryService } from './cloudinary.service';
+import { SharedservicesModule } from 'src/shared/services/sharedservices.module';
 import { CloudinaryController } from './cloudinary.controller';
 
 @Module({
-  providers: [CloudinaryService],
+  imports: [SharedservicesModule],
   controllers: [CloudinaryController],
 })
 export class CloudinaryModule {}

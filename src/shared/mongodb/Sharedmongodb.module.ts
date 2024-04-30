@@ -10,6 +10,7 @@ import {
   SchemaUsuario,
   Usuario,
 } from 'src/modules/usuarios/entities/usuario.entity';
+import { ModeloFoto, schemafoto } from 'src/services/cloudinary/entity';
 
 // creas tu database en .net/nombredatabase
 //  @......mongodb.net HOST
@@ -25,6 +26,10 @@ import {
       {
         name: Usuario.name,
         schema: SchemaUsuario,
+      },
+      {
+        name: ModeloFoto.name,
+        schema: schemafoto,
       },
       {
         name: Role.name,

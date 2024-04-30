@@ -9,4 +9,15 @@ export interface ConsultorioRepository {
   delete(id: string): Promise<Consultario>;
   update(id: string, data: UpdateConsultarioDto): Promise<Consultario>;
   find(): Promise<Consultario>;
+  findById(id: string): Promise<Consultario>;
+  findByIdUpdateImgConsultorio(
+    id: string,
+    img_consultorio: string,
+    id_img_consultorio: string,
+  ): Promise<Consultario>;
+  findByIdUpdateLogoConsultorio(
+    id: string,
+    img_logo: string,
+    id_logo: string,
+  ): Promise<Consultario>;
 }

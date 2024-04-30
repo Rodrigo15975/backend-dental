@@ -11,6 +11,34 @@ export class ConsultarioMongoRespository implements ConsultorioRepository {
     @InjectModel(Consultario.name)
     private readonly consultarioModel: Model<Consultario>,
   ) {}
+
+  async findById(id: string): Promise<Consultario> {
+    return await this.consultarioModel.findById(id);
+  }
+
+  async findByIdUpdateImgConsultorio(
+    id: string,
+    img_consultorio: string,
+    id_img_consultorio: string,
+  ): Promise<Consultario> {
+    return await this.consultarioModel
+      .findByIdAndUpdate(id, {
+        $set: { img_consultorio, id_img_consultorio },
+      })
+      .exec();
+  }
+
+  async findByIdUpdateLogoConsultorio(
+    id: string,
+    img_logo: string,
+    id_logo: string,
+  ): Promise<Consultario> {
+    return await this.consultarioModel
+      .findByIdAndUpdate(id, {
+        $set: { img_logo, id_logo },
+      })
+      .exec();
+  }
   async create(data: CreateConsultarioDto): Promise<Consultario> {
     return await this.consultarioModel.create(data);
   }

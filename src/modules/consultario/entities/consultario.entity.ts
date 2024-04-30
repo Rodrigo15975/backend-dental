@@ -13,7 +13,12 @@ export class Consultario {
   @Prop({
     trim: true,
   })
-  logo: string;
+  img_logo: string;
+
+  @Prop({
+    trim: true,
+  })
+  id_logo: string;
 
   @Prop({
     trim: true,
@@ -27,6 +32,11 @@ export class Consultario {
     lowercase: true,
   })
   razonSocial: string;
+
+  @Prop({
+    trim: true,
+  })
+  id_img_consultorio: string;
 
   @Prop({
     trim: true,

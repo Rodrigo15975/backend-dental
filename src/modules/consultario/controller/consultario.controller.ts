@@ -11,7 +11,7 @@ import { ConsultarioService } from '../services/consultario.service';
 import { CreateConsultarioDto } from '../dto/create-consultario.dto';
 import { UpdateConsultarioDto } from '../dto/update-consultario.dto';
 
-@Controller('consultario')
+@Controller('consultorio')
 export class ConsultarioController {
   constructor(private readonly consultarioService: ConsultarioService) {}
 

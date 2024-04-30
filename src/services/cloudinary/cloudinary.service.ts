@@ -5,6 +5,7 @@ import {
   UploadApiErrorResponse,
   UploadApiResponse,
 } from 'cloudinary';
+import { ConsultarioService } from 'src/modules/consultario/services/consultario.service';
 import * as streamifier from 'streamifier';
 
 export type CloudinaryResponse = UploadApiResponse | UploadApiErrorResponse;
@@ -19,13 +20,12 @@ export class CloudinaryService {
 
   constructor(
     private readonly config: ConfigService,
-    // private readonly empresaServices: EmpresaService,
+    private readonly consultorioServices: ConsultarioService,
   ) {}
 
-  // Para actualizar el logo de la empresa
-  async uploadFile(file: Express.Multer.File, id_empresa: string) {
-    // const empresa = await this.empresaServices.findOne(id_empresa);
-    // await this.removeFile(empresa.logo, empresa.id_logo);
+  async uploadFileLogo(file: Express.Multer.File, id: string) {
+    const consultorio = await this.findConsultorio(id);
+    await this.removeFile(consultorio.img_logo, consultorio.id_logo);
 
     const result = await new Promise<CloudinaryResponse>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
@@ -36,28 +36,46 @@ export class CloudinaryService {
       );
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
-    return { url: result.secure_url };
-    // await this.empresaServices.updateLogo(result.secure_url, result.public_id);
+    await this.consultorioServices.findByIdUpdateLogoConsultorio(
+      id,
+      result.secure_url,
+      result.public_id,
+    );
   }
-
-  // Para eliminar el logo de la empresa
-  async removeFile(logo: string, id_logo: string) {
-    if (logo && id_logo) await cloudinary.uploader.destroy(id_logo);
-  }
-
-  async uploadFiles(files: Express.Multer.File[]) {
-    const uploadPromises: Promise<CloudinaryResponse>[] = files.map((file) => {
-      return new Promise<CloudinaryResponse>((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          (error, result) => {
-            if (error) return reject(error);
-            resolve(result);
-          },
-        );
-        streamifier.createReadStream(file.buffer).pipe(uploadStream);
-      });
+  async updateFilePortada(id: string, url: string) {
+    await cloudinary.uploader.upload(url, {
+      public_id: id,
+      overwrite: true,
     });
-    const results = await Promise.all(uploadPromises);
-    return results.map((result) => ({ url: result.secure_url }));
+  }
+
+  async uploadFilePortada(file: Express.Multer.File, id: string) {
+    const consultorio = await this.findConsultorio(id);
+    await this.removeFile(
+      consultorio.img_consultorio,
+      consultorio.id_img_consultorio,
+    );
+    const result = await new Promise<CloudinaryResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+    await this.consultorioServices.findByIdUpdateImgConsultorio(
+      id,
+      result.secure_url,
+      result.public_id,
+    );
+  }
+
+  async findConsultorio(id: string) {
+    return await this.consultorioServices.findById(id);
+  }
+  // Para eliminar el logo de la empresa
+  private async removeFile(logo: string, id_logo: string) {
+    if (logo && id_logo) await cloudinary.uploader.destroy(id_logo);
   }
 }
