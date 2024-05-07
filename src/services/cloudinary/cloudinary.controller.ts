@@ -11,6 +11,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from './cloudinary.service';
 
+// Es de la portada y del logo(ruc)
 @Controller('cloudinary')
 export class CloudinaryController {
   constructor(
@@ -24,7 +25,9 @@ export class CloudinaryController {
     @UploadedFile() file: Express.Multer.File,
     @Query('id') id_consultorio: string,
   ) {
-    await this.cloudinaryServices.uploadFileLogo(file, id_consultorio);
+    console.log(file, id_consultorio);
+
+    // await this.cloudinaryServices.uploadFileLogo(file, id_consultorio);
   }
 
   @Post('/portada')
@@ -33,7 +36,8 @@ export class CloudinaryController {
     @UploadedFile() file: Express.Multer.File,
     @Query('id') id_consultorio: string,
   ) {
-    await this.cloudinaryServices.uploadFilePortada(file, id_consultorio);
+    console.log(file, id_consultorio);
+    // await this.cloudinaryServices.uploadFilePortada(file, id_consultorio);
   }
 
   @Patch('/portada/:id')

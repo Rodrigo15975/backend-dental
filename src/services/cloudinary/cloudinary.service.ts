@@ -10,6 +10,7 @@ import * as streamifier from 'streamifier';
 
 export type CloudinaryResponse = UploadApiResponse | UploadApiErrorResponse;
 
+// Es de la portada y del logo(ruc)
 @Injectable()
 export class CloudinaryService {
   cloud = cloudinary.config({

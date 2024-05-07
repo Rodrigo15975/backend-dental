@@ -5,12 +5,23 @@ import {
   Consultario,
   SchemaConsultorio,
 } from 'src/modules/consultario/entities/consultario.entity';
+import {
+  Horario,
+  SchemaHorario,
+} from 'src/modules/horario/entities/horario.entity';
+import {
+  Medico,
+  SchemaMedico,
+} from 'src/modules/medicos/entities/medico.entity';
 import { Role, SchemaRole } from 'src/modules/roles/entities/role.entity';
+import {
+  SchemaServicios,
+  Servicio,
+} from 'src/modules/servicios/entities/servicio.entity';
 import {
   SchemaUsuario,
   Usuario,
 } from 'src/modules/usuarios/entities/usuario.entity';
-import { ModeloFoto, schemafoto } from 'src/services/cloudinary/entity';
 
 // creas tu database en .net/nombredatabase
 //  @......mongodb.net HOST
@@ -24,13 +35,22 @@ import { ModeloFoto, schemafoto } from 'src/services/cloudinary/entity';
 
     MongooseModule.forFeature([
       {
+        name: Servicio.name,
+        schema: SchemaServicios,
+      },
+      {
+        name: Medico.name,
+        schema: SchemaMedico,
+      },
+      {
+        name: Horario.name,
+        schema: SchemaHorario,
+      },
+      {
         name: Usuario.name,
         schema: SchemaUsuario,
       },
-      {
-        name: ModeloFoto.name,
-        schema: schemafoto,
-      },
+
       {
         name: Role.name,
         schema: SchemaRole,

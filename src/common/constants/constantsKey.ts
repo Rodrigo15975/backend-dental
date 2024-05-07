@@ -1,3 +1,5 @@
+import { env } from 'process';
+
 export const constantsKey = {
-  secret: 'AUTH-SOCIOS',
+  secret: env.SECRET_AUTH,
 };

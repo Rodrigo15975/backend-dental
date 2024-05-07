@@ -1,19 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Usuario } from '../entities/usuario.entity';
 import { Model } from 'mongoose';
-import { UsuarioRepository } from './usuario-repository';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
+import { Usuario } from '../entities/usuario.entity';
+import { UsuarioRepository } from './usuario-repository';
 
 @Injectable()
 export class UsuarioMongoRepository implements UsuarioRepository {
   constructor(
     @InjectModel(Usuario.name) private readonly usuarioModel: Model<Usuario>,
   ) {}
+
+  async findAllUsuarios(): Promise<Usuario[]> {
+    // no traer la contraseña
+    return await this.usuarioModel.find().select('-contraseña');
+  }
   async create(data: CreateUsuarioDto): Promise<Usuario> {
     return await this.usuarioModel.create(data);
   }
-  async delete(id: string): Promise<Usuario> {
+  @HttpCode(204)
+  async delete(id: string): Promise<void> {
     return await this.usuarioModel.findByIdAndDelete(id);
   }
   async findByDni(dni: string): Promise<Usuario> {
@@ -29,8 +35,19 @@ export class UsuarioMongoRepository implements UsuarioRepository {
     return await this.usuarioModel.findOne({ celular });
   }
   async update(id: string, data: CreateUsuarioDto): Promise<Usuario> {
-    return await this.usuarioModel
-      .findByIdAndUpdate(id, { data }, { new: true })
-      .exec();
+    return await this.usuarioModel.findByIdAndUpdate(
+      id,
+      { ...data },
+      { new: true },
+    );
+  }
+  async findByDniExisting(dni: string): Promise<Usuario> {
+    return await this.usuarioModel.findOne({ dni }).exec();
+  }
+  async findByEmailExisting(email: string): Promise<Usuario> {
+    return await this.usuarioModel.findOne({ email }).exec();
+  }
+  async findByPhoneExisting(celular: string): Promise<Usuario> {
+    return await this.usuarioModel.findOne({ celular }).exec();
   }
 }

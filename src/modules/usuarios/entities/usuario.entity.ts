@@ -2,8 +2,10 @@ import { Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Persona } from 'src/class/Persona';
 
 @Schema({
-  collection: 'Usuarios',
+  collection: 'usuarios',
   timestamps: true,
 })
-export class Usuario extends Persona {}
+export class Usuario extends Persona {
+  id: string;
+}
 export const SchemaUsuario = SchemaFactory.createForClass(Usuario);

@@ -1,4 +1,12 @@
-import { IsOptional, Matches, MaxLength, MinLength } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsDate,
+  IsOptional,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { transformDateddMMyyyy } from '../utils/dateTransform/transformDate';
 import { generalValidation, messageValidation } from '../utils/regs/reg';
 
 export class CreatePersonaDto {
@@ -17,29 +25,33 @@ export class CreatePersonaDto {
   })
   apellidos: string;
 
+  @Matches(generalValidation.matchesLetras, {
+    message: `Nombre ${messageValidation.msgLetras}`,
+  })
+  name: string;
+
   @Matches(generalValidation.matchesLetrasAndNumbers, {
-    message: messageValidation.msgPassword,
+    message: `Contraseña ${messageValidation.msgPassword}`,
   })
   contraseña: string;
 
   @Matches(generalValidation.matchesEmail, {
-    message: messageValidation.msgEmail,
+    message: `Email ${messageValidation.msgEmail}`,
   })
   email: string;
 
   @Matches(generalValidation.matchesPhones, {
-    message: messageValidation.msgPhones,
+    message: `Celular ${messageValidation.msgPhones}`,
   })
   celular: string;
 
   @Matches(generalValidation.matchesLetras, {
-    message: messageValidation.msgLetras,
+    message: `Genero ${messageValidation.msgLetras}`,
   })
   genero: string;
 
-  @Matches(generalValidation.matchesLetras, {
-    message: messageValidation.msgLetras,
-  })
+  @Transform(({ value }) => transformDateddMMyyyy(value))
+  @IsDate({ message: 'Fecha: dd/MM/yyyy' })
   fechaNacimiento: string;
 
   @IsOptional()
@@ -47,25 +59,25 @@ export class CreatePersonaDto {
 
   @IsOptional()
   @Matches(generalValidation.matchesLetras, {
-    message: messageValidation.msgLetras,
+    message: `Departamento ${messageValidation.msgLetras}`,
   })
   departamento: string;
 
   @IsOptional()
   @Matches(generalValidation.matchesLetras, {
-    message: messageValidation.msgLetras,
+    message: `Distrito ${messageValidation.msgLetras}`,
   })
   distrito: string;
 
   @IsOptional()
   @Matches(generalValidation.matchesLetras, {
-    message: messageValidation.msgLetras,
+    message: `Ciudad ${messageValidation.msgLetras}`,
   })
   ciudad: string;
 
   @IsOptional()
   @Matches(generalValidation.matchesDireccion, {
-    message: messageValidation.msgDireccion,
+    message: `Dirección ${messageValidation.msgDireccion}`,
   })
   direccion: string;
 }

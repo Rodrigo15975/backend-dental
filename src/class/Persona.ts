@@ -21,7 +21,7 @@ export class Persona {
     lowercase: true,
     trim: true,
   })
-  nombre: string;
+  name: string;
 
   @Prop({
     lowercase: true,

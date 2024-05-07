@@ -6,14 +6,16 @@ import { AuthJwt } from './jwt/auth-jwt';
 import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controller/auth.controller';
+import { SharedservicesModule } from 'src/shared/services/sharedservices.module';
 
 @Module({
   imports: [
+    SharedservicesModule,
     SharedMongodbModule,
     JwtModule.register({
       secret: constantsKey.secret,
       signOptions: {
-        expiresIn: '1d',
+        expiresIn: '7d',
       },
     }),
   ],
