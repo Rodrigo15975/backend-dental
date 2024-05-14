@@ -1,11 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { PipelineStage, Types } from 'mongoose';
+import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
+import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
+import { generalValidation } from 'src/common/utils/regs/reg';
+import { Medico } from '../../entities/medico.entity';
+import {
+  addFieldsRolesStage,
+  lookupRolesStage,
+  unwindRoleStage,
+} from 'src/common/pipeline/roles/pipelineRoles';
+import { lookupServiciosStage } from 'src/common/pipeline/servicios/pipelineServicios';
 import {
   MEDICO_REPOSITORY,
   MedicoRepository,
 } from '../../repository/medico-repository';
 import { MedicoFind } from './types/typesFind';
-import { Medico } from '../../entities/medico.entity';
-import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
+import { projectStageMedico } from 'src/common/pipeline/medicos/pipelineMedicos';
 
 @Injectable()
 export class MedicoFindService implements MedicoFind {
@@ -14,17 +24,49 @@ export class MedicoFindService implements MedicoFind {
     private readonly medicoRepository: MedicoRepository,
     private readonly handleErrors: HandleErrors,
   ) {}
+
+  async findAuthByMedico(identifier: string): Promise<Medico> {
+    const email = generalValidation.matchesEmail.test(identifier);
+    const celular = generalValidation.matchesPhones.test(identifier);
+    const dni = generalValidation.matchesDNI.test(identifier);
+    const authFunctionsPromises: Promise<Medico>[] = [];
+
+    if (email)
+      authFunctionsPromises.push(this.medicoRepository.findByEmail(identifier));
+    if (celular)
+      authFunctionsPromises.push(this.medicoRepository.findByPhone(identifier));
+    if (dni)
+      authFunctionsPromises.push(this.medicoRepository.findByDni(identifier));
+
+    // Ayuda con el paralelismo
+    const results = await Promise.all(authFunctionsPromises);
+    // Devuelve el primer elemento que no es undefined
+    return results.find((result) => result !== undefined);
+  }
+  async aggregateGeneric<T>(pipeline: PipelineStage[]): Promise<T> {
+    return await this.medicoRepository.aggregateGeneric<T>(pipeline);
+  }
+
   async findAllMedicos(): Promise<Medico[]> {
-    const medicos = await this.medicoRepository.findAllMedicos();
+    const pipeline: PipelineStage[] = AggregateQuery.pipeline(
+      ...lookupRolesStage,
+      unwindRoleStage,
+      addFieldsRolesStage,
+
+      ...lookupServiciosStage,
+      projectStageMedico,
+    );
+    const medicos = await this.aggregateGeneric<Medico[]>(pipeline);
     if (medicos.length === 0)
-      this.handleErrors.handleSendMessage('La lista está sin datos');
+      this.handleErrors.handleSendMessage('La lista de médicos está sin datos');
     return medicos;
   }
   async findByDni(dni: string): Promise<Medico> {
     const medicoFound = await this.medicoRepository.findByDni(dni);
+
     if (!medicoFound)
-      this.handleErrors.handleErrorsConflicException(
-        `El DNI ${dni} no está registrado`,
+      this.handleErrors.handleErrorsNotFoundException(
+        `El médico con DNI ${dni} no está registrado`,
       );
     return medicoFound;
   }
@@ -32,23 +74,38 @@ export class MedicoFindService implements MedicoFind {
     const medicoFound = await this.medicoRepository.findByEmail(email);
     if (!medicoFound)
       this.handleErrors.handleErrorsNotFoundException(
-        `El email ${email} no fue encontrado `,
+        `El médico con email ${email} no fue encontrado`,
       );
     return medicoFound;
   }
-  async findById(id: string): Promise<Medico> {
-    const medicoFound = await this.medicoRepository.findById(id);
-    if (!medicoFound)
+
+  private async verifyId(id: string) {
+    const medico = await this.medicoRepository.findById(id);
+    if (!medico)
       this.handleErrors.handleErrorsNotFoundException(
-        `El id ${id} no fue encontrado `,
+        `El médico con id ${id} no fue encontrado`,
       );
-    return medicoFound;
+    return medico;
   }
+
+  async findById(id: string): Promise<Medico> {
+    await this.verifyId(id);
+    const pipeline: PipelineStage[] = AggregateQuery.pipeline(
+      { $match: { _id: new Types.ObjectId(id) } },
+      ...lookupRolesStage,
+      addFieldsRolesStage,
+      unwindRoleStage,
+      { $project: { contraseña: 0 } },
+    );
+    const data = await this.aggregateGeneric<Medico>(pipeline);
+    return data[0];
+  }
+
   async findByPhone(celular: string): Promise<Medico> {
     const medicoFound = await this.medicoRepository.findByPhone(celular);
     if (!medicoFound)
       this.handleErrors.handleErrorsNotFoundException(
-        `El celular ${celular} no fue encontrado `,
+        `El médico con el celular ${celular} no fue encontrado `,
       );
     return medicoFound;
   }
@@ -57,7 +114,7 @@ export class MedicoFindService implements MedicoFind {
     const medicoFound = await this.medicoRepository.findByDniExisting(dni);
     if (medicoFound)
       this.handleErrors.handleErrorsConflicException(
-        `El DNI ${dni} ya está registrado`,
+        `El médico con DNI ${dni} ya está registrado`,
       );
     return medicoFound;
   }
@@ -65,7 +122,7 @@ export class MedicoFindService implements MedicoFind {
     const medicoFound = await this.medicoRepository.findByEmailExisting(email);
     if (medicoFound)
       this.handleErrors.handleErrorsConflicException(
-        `El email ${email} ya está registrado`,
+        `El médico con email ${email} ya está registrado`,
       );
     return medicoFound;
   }
@@ -74,30 +131,30 @@ export class MedicoFindService implements MedicoFind {
       await this.medicoRepository.findByPhoneExisting(celular);
     if (medicoFound)
       this.handleErrors.handleErrorsConflicException(
-        `El celular ${celular} ya está registrado`,
+        `El médico con celular ${celular} ya está registrado`,
       );
     return medicoFound;
   }
-  async findByDniExistingInUsuario(dni: string): Promise<void> {
+  async findByDniExistingInMedico(dni: string): Promise<void> {
     const medicoFound = await this.medicoRepository.findByDniExisting(dni);
     if (medicoFound)
       this.handleErrors.handleErrorsConflicException(
-        `El DNI ${dni} ya está registrado`,
+        `El DNI ${dni} ya está registrado en la lista de Médicos`,
       );
   }
-  async findByEmailExistingInUsuario(email: string): Promise<void> {
+  async findByEmailExistingInMedico(email: string): Promise<void> {
     const medicoFound = await this.medicoRepository.findByEmailExisting(email);
     if (medicoFound)
       this.handleErrors.handleErrorsConflicException(
-        `El email ${email} ya está registrado`,
+        `El email ${email} ya está registrado en la lista de Médicos`,
       );
   }
-  async findByPhoneExistingInUsuario(celular: string): Promise<void> {
+  async findByPhoneExistingInMedico(celular: string): Promise<void> {
     const medicoFound =
       await this.medicoRepository.findByPhoneExisting(celular);
     if (medicoFound)
       this.handleErrors.handleErrorsConflicException(
-        `El celular ${celular} ya está registrado`,
+        `El celular ${celular} ya está registrado en la lista de Médicos`,
       );
   }
 }

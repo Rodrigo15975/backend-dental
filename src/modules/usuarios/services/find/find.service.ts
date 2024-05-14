@@ -6,6 +6,15 @@ import {
 import { Usuario } from '../../entities/usuario.entity';
 import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import { UsuarioFind } from './types/typesFind';
+import { generalValidation } from 'src/common/utils/regs/reg';
+import { PipelineStage, Types } from 'mongoose';
+import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
+import {
+  addFieldsRolesStage,
+  lookupRolesStage,
+  unwindRoleStage,
+} from 'src/common/pipeline/roles/pipelineRoles';
+import { projectUsuarioStage } from 'src/common/pipeline/usuarios/pipelineUsuarios';
 
 @Injectable()
 export class UsuarioFindService implements UsuarioFind {
@@ -15,10 +24,39 @@ export class UsuarioFindService implements UsuarioFind {
     private readonly handleErrors: HandleErrors,
   ) {}
 
+  async aggregateGeneric<T>(pipeline: PipelineStage[]): Promise<T> {
+    return await this.usuarioRepository.aggregateGeneric<T>(pipeline);
+  }
+
+  async findAuthByUsuario(identifier: string): Promise<Usuario> {
+    const email = generalValidation.matchesEmail.test(identifier);
+    const celular = generalValidation.matchesPhones.test(identifier);
+    const dni = generalValidation.matchesDNI.test(identifier);
+
+    const authFunctionsPromise: Promise<Usuario>[] = [];
+    if (email)
+      authFunctionsPromise.push(this.usuarioRepository.findByEmail(identifier));
+    if (celular)
+      authFunctionsPromise.push(this.usuarioRepository.findByPhone(identifier));
+    if (dni)
+      authFunctionsPromise.push(this.usuarioRepository.findByDni(identifier));
+    const results = await Promise.all(authFunctionsPromise);
+    // Devuelve el primer elemento que no es undefined
+    return results.find((result) => result !== undefined);
+  }
+
   async findAllUsuarios(): Promise<Usuario[]> {
-    const usuarios = await this.usuarioRepository.findAllUsuarios();
+    const pipeline: PipelineStage[] = AggregateQuery.pipeline(
+      ...lookupRolesStage,
+      unwindRoleStage,
+      addFieldsRolesStage,
+      projectUsuarioStage,
+    );
+    const usuarios = await this.aggregateGeneric<Usuario[]>(pipeline);
     if (usuarios.length === 0)
-      this.handleErrors.handleSendMessage('La lista está sin datos');
+      this.handleErrors.handleSendMessage(
+        'La lista de usuarios está sin datos',
+      );
     return usuarios;
   }
   async findByDni(dni: string): Promise<Usuario> {
@@ -37,13 +75,28 @@ export class UsuarioFindService implements UsuarioFind {
       );
     return userFound;
   }
-  async findById(id: string): Promise<Usuario> {
-    const userFound = await this.usuarioRepository.findById(id);
-    if (!userFound)
+  private async verifyId(id: string) {
+    const user = await this.usuarioRepository.findById(id);
+    if (!user)
       this.handleErrors.handleErrorsNotFoundException(
         `El id ${id} no fue encontrado `,
       );
-    return userFound;
+    return user;
+  }
+  async findById(id: string): Promise<Usuario> {
+    await this.verifyId(id);
+    const pipeline: PipelineStage[] = AggregateQuery.pipeline(
+      { $match: { _id: new Types.ObjectId(id) } },
+      ...AggregateQuery.buildLookupStage('roles', 'role'),
+      {
+        $addFields: {
+          role: '$role.role',
+        },
+      },
+      { $project: { contraseña: 0 } },
+    );
+    const user = await this.aggregateGeneric<Usuario>(pipeline);
+    return user[0];
   }
   async findByPhone(celular: string): Promise<Usuario> {
     const userFound = await this.usuarioRepository.findByPhone(celular);

@@ -6,7 +6,7 @@ export function transformDateddMMyyyy(value: string): Date | null {
 }
 
 // forma de fecha internacional
-export function transformDate(value: string): Date | null {
+export function transformDateInternational(value: string): Date | null {
   const date = parse(value, 'yyyy-MM-dd', new Date());
   return isValid(date) ? date : null;
 }

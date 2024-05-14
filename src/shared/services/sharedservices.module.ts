@@ -4,6 +4,7 @@ import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import { ConsultarioMongoRespository } from 'src/modules/consultario/repository/consultorio-mongo-repository';
 import { CONSULTARIO_REPOSITORY } from 'src/modules/consultario/repository/consultorio-repository';
 import { ConsultarioService } from 'src/modules/consultario/services/consultario.service';
+import { FilesConsultorioService } from 'src/modules/consultario/services/files/files.consultorio.service';
 
 // Roles
 import { MongoRepositoryRole } from 'src/modules/roles/repository/mongo-repository-role';
@@ -28,6 +29,8 @@ import { MEDICO_REPOSITORY } from 'src/modules/medicos/repository/medico-reposit
 import { MedicoMongoRepository } from 'src/modules/medicos/repository/medico-mongo-repository';
 import { MedicoFindService } from 'src/modules/medicos/services/find/find.service';
 import { MedicoCreateService } from 'src/modules/medicos/services/create/create.service';
+import { MedicoUpdateService } from 'src/modules/medicos/services/update/update.service';
+import { MedicoDeleteService } from 'src/modules/medicos/services/delete/delete.service';
 
 // Servicios
 import { ServiciosService } from 'src/modules/servicios/services/servicios.service';
@@ -38,15 +41,36 @@ import { ServicioDeleteService } from 'src/modules/servicios/services/delete/del
 import { ServicioUpdateService } from 'src/modules/servicios/services/update/update.service';
 import { ServicioCreateService } from 'src/modules/servicios/services/create/create.service';
 
+// config global
+import { ConfigModule } from '@nestjs/config';
+
+// Files General(medico,usuario)
+import { UsuarioFileService } from 'src/modules/usuarios/services/file/file.service';
+import { CloudinaryUsuarioService } from 'src/services/cloudinary-usuario/cloudinary-usuario.service';
+import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
+
 @Module({
-  imports: [SharedMongodbModule, HandleErrors],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    SharedMongodbModule,
+    HandleErrors,
+  ],
   providers: [
+    AggregateQuery,
+
+    // Files General(medico,usuario)
+    UsuarioFileService,
+    CloudinaryUsuarioService,
+
     // Usuarios
     UsuarioDeleteService,
     UsuarioFindService,
     UsuarioUpdateService,
     UsuarioCreateService,
     UsuariosService,
+    { provide: USUARIO_REPOSITORY, useClass: UsuarioMongoRepository },
 
     // Servicios
     ServiciosService,
@@ -60,6 +84,8 @@ import { ServicioCreateService } from 'src/modules/servicios/services/create/cre
     MedicoCreateService,
     MedicoFindService,
     MedicosService,
+    MedicoUpdateService,
+    MedicoDeleteService,
     { provide: MEDICO_REPOSITORY, useClass: MedicoMongoRepository },
 
     // Roles
@@ -69,14 +95,20 @@ import { ServicioCreateService } from 'src/modules/servicios/services/create/cre
     // Errors
     HandleErrors,
 
-    // Config logo, portada
+    // Config logo, portada (CONSULTORIO)(CLOUDINARY)
     CloudinaryService,
-    { provide: USUARIO_REPOSITORY, useClass: UsuarioMongoRepository },
-
+    FilesConsultorioService,
     ConsultarioService,
     { provide: CONSULTARIO_REPOSITORY, useClass: ConsultarioMongoRespository },
   ],
   exports: [
+    // Agreggate
+    AggregateQuery,
+
+    // Files General(medico,usuario)
+    UsuarioFileService,
+    CloudinaryUsuarioService,
+
     // Usuarios
     UsuariosService,
     UsuarioFindService,
@@ -95,15 +127,19 @@ import { ServicioCreateService } from 'src/modules/servicios/services/create/cre
     MedicosService,
     MedicoFindService,
     MedicoCreateService,
-
+    MedicoDeleteService,
+    MedicoUpdateService,
     // Roles
     RolesService,
 
     // Consultorio
     ConsultarioService,
     CloudinaryService,
+    FilesConsultorioService,
 
     SharedMongodbModule,
+    // se comparte a todos
+    ConfigModule,
   ],
 })
 export class SharedservicesModule {}

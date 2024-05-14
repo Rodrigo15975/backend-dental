@@ -4,7 +4,8 @@ import { ConfigService } from '@nestjs/config';
 export class ApiDniService {
   private readonly tokenAccess: string =
     this.configService.getOrThrow('TOKEN_ACCESS');
-  private readonly urlApi: string = this.configService.getOrThrow('URL_API');
+  private readonly urlApi: string =
+    this.configService.getOrThrow('URL_API_DNI');
 
   constructor(private readonly configService: ConfigService) {}
   async getDni(dni: string) {
@@ -16,6 +17,7 @@ export class ApiDniService {
           Authorization: `Bearer ${this.tokenAccess}`,
         },
       });
+
       const data = await res.json();
       return data;
     } catch (error) {

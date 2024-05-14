@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
+import { PropsCreateServicioForMedicoDto } from '../../dto/create-servicio.dto';
 import { Servicio } from '../../entities/servicio.entity';
 import {
   SERVICIO_REPOSITORY,
   ServicioRepository,
 } from '../../repository/servicio-repository';
 import { ServicioFind } from './types/typesFind';
-import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 
 @Injectable()
 export class ServicioFindService implements ServicioFind {
@@ -41,5 +42,16 @@ export class ServicioFindService implements ServicioFind {
         `El servicio ${nombre} ya está registrado`,
       );
     return servicio;
+  }
+  async findGetServicesAllId(
+    servicios: PropsCreateServicioForMedicoDto,
+  ): Promise<PropsCreateServicioForMedicoDto> {
+    const results = await Promise.all(
+      servicios.map(
+        async (servicio) => await this.findByService(servicio.nombre),
+      ),
+    );
+    const ids = results.map((servicios) => servicios._id);
+    return ids;
   }
 }

@@ -1,67 +1,75 @@
-import { IsOptional, Matches } from 'class-validator';
+import { IsOptional, Matches, ValidateIf } from 'class-validator';
 import {
   generalValidation,
   messageValidation,
 } from 'src/common/utils/regs/reg';
 
 export class CreateConsultarioDto {
+  @Matches(generalValidation.matchesRuc, {
+    message: messageValidation.msgRuc,
+  })
+  ruc: string;
+
   @IsOptional()
   img_consultorio: string;
 
   @IsOptional()
   logo: string;
 
-  @Matches(generalValidation.matchesRuc, {
-    message: messageValidation.msgRuc,
-  })
-  ruc: string;
-
+  @ValidateIf((_, value) => value === undefined || value === null)
+  @IsOptional()
   @Matches(generalValidation.matchesLetras, {
     message: messageValidation.msgLetras,
   })
-  @IsOptional()
   razonSocial: string;
 
+  @ValidateIf((_, value) => value === undefined || value === null)
+  @IsOptional()
   @Matches(generalValidation.matchesPhones, {
     message: messageValidation.msgPhones,
   })
-  @IsOptional()
   telefono: string;
 
+  @ValidateIf((_, value) => value === undefined || value === null)
+  @IsOptional()
   @Matches(generalValidation.matchesLetras, {
     message: messageValidation.msgLetras,
   })
-  @IsOptional()
   estado: string;
 
+  @ValidateIf((_, value) => value === undefined || value === null)
+  @IsOptional()
   @Matches(generalValidation.matchesLetras, {
     message: messageValidation.msgLetras,
   })
-  @IsOptional()
   condicion: string;
 
+  @ValidateIf((_, value) => value === undefined || value === null)
+  @IsOptional()
   @Matches(generalValidation.matchesDireccion, {
     message: messageValidation.msgDireccion,
   })
-  @IsOptional()
   direccion: string;
 
+  @ValidateIf((_, value) => value === undefined || value === null)
+  @IsOptional()
   @Matches(generalValidation.matchesLetras, {
     message: messageValidation.msgLetras,
   })
-  @IsOptional()
   departamento: string;
 
+  @ValidateIf((_, value) => value === undefined || value === null)
+  @IsOptional()
   @Matches(generalValidation.matchesLetras, {
     message: messageValidation.msgLetras,
   })
-  @IsOptional()
   provincia: string;
 
+  @ValidateIf((_, value) => value === undefined || value === null)
+  @IsOptional()
   @Matches(generalValidation.matchesLetras, {
     message: messageValidation.msgLetras,
   })
-  @IsOptional()
   distrito: string;
 
   @IsOptional()

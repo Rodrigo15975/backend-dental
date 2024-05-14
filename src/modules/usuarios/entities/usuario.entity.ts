@@ -5,7 +5,5 @@ import { Persona } from 'src/class/Persona';
   collection: 'usuarios',
   timestamps: true,
 })
-export class Usuario extends Persona {
-  id: string;
-}
+export class Usuario extends Persona {}
 export const SchemaUsuario = SchemaFactory.createForClass(Usuario);

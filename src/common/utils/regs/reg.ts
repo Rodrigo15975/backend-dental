@@ -7,7 +7,7 @@ export const generalValidation = {
   matchesRuc: /^\d{11}$/,
   matchesLetras: /^[.\sA-ZÁÉÍÓÚÜÑ?]+$/i,
   matchesRazonSocial: /^[\w\d\s.,()-]+$/,
-  matchesNumeros: /^[0-9]+(\.[0-9]+)?$/,
+  matchesCosto: /^\d+(\.\d+)?$/,
 };
 
 export const messageValidation = {
@@ -18,5 +18,5 @@ export const messageValidation = {
   msgLetras: 'solo puede contener letras',
   msgDireccion: 'debe contener letras y números',
   msgPhones: 'debe tener 9 dígitos',
-  msgNumeros: 'solo acepta números(decimal,entero)',
+  msgCosto: 'El costo tiene que ser (decimal,entero) 55.00',
 };

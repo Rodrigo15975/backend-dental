@@ -1,20 +1,36 @@
-import { Matches } from 'class-validator';
+import { Type } from 'class-transformer';
+import { Matches, ValidateNested } from 'class-validator';
 import {
   generalValidation,
   messageValidation,
 } from 'src/common/utils/regs/reg';
 export class CreateServicioDto {
-  @Matches(generalValidation.matchesNumeros, {
-    message: `El costo ${messageValidation.msgNumeros}`,
+  @ValidateNested({ each: true })
+  @Type(() => PropsCreateServicioDto)
+  servicios: PropsCreateServicioDto[];
+}
+
+export class PropsCreateServicioDto {
+  // Sol oacepta dos ceros la final, importante
+  @Matches(generalValidation.matchesCosto, {
+    message: messageValidation.msgCosto,
   })
-  costo: number;
+  costo: string;
 
   @Matches(generalValidation.matchesLetras, {
     message: `El nombre del servicio ${messageValidation.msgLetras}`,
   })
   nombre: string;
-  @Matches(generalValidation.matchesNumeros, {
-    message: `el count ${messageValidation.msgNumeros}`,
-  })
-  count: number;
 }
+export type PropsCreateServicioForMedicoDto = Omit<
+  PropsCreateServicioDto,
+  'costo'
+>[];
+
+type PropsAddNewServices = {
+  _id: string;
+};
+// // Añadir servicios existente al medico
+export type AddNewServicesForMedicoWithDni = {
+  servicios: PropsAddNewServices[];
+};

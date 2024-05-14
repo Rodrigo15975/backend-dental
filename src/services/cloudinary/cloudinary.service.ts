@@ -5,7 +5,6 @@ import {
   UploadApiErrorResponse,
   UploadApiResponse,
 } from 'cloudinary';
-import { ConsultarioService } from 'src/modules/consultario/services/consultario.service';
 import * as streamifier from 'streamifier';
 
 export type CloudinaryResponse = UploadApiResponse | UploadApiErrorResponse;
@@ -19,15 +18,9 @@ export class CloudinaryService {
     api_secret: this.config.getOrThrow('API_SECRET_CLOUD'),
   });
 
-  constructor(
-    private readonly config: ConfigService,
-    private readonly consultorioServices: ConsultarioService,
-  ) {}
+  constructor(private readonly config: ConfigService) {}
 
-  async uploadFileLogo(file: Express.Multer.File, id: string) {
-    const consultorio = await this.findConsultorio(id);
-    await this.removeFile(consultorio.img_logo, consultorio.id_logo);
-
+  async uploadFileLogo(file: Express.Multer.File) {
     const result = await new Promise<CloudinaryResponse>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         (error, result) => {
@@ -37,25 +30,10 @@ export class CloudinaryService {
       );
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
-    await this.consultorioServices.findByIdUpdateLogoConsultorio(
-      id,
-      result.secure_url,
-      result.public_id,
-    );
-  }
-  async updateFilePortada(id: string, url: string) {
-    await cloudinary.uploader.upload(url, {
-      public_id: id,
-      overwrite: true,
-    });
+    return result;
   }
 
-  async uploadFilePortada(file: Express.Multer.File, id: string) {
-    const consultorio = await this.findConsultorio(id);
-    await this.removeFile(
-      consultorio.img_consultorio,
-      consultorio.id_img_consultorio,
-    );
+  async uploadFilePortada(file: Express.Multer.File) {
     const result = await new Promise<CloudinaryResponse>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         (error, result) => {
@@ -65,18 +43,11 @@ export class CloudinaryService {
       );
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
-    await this.consultorioServices.findByIdUpdateImgConsultorio(
-      id,
-      result.secure_url,
-      result.public_id,
-    );
+    return result;
   }
 
-  async findConsultorio(id: string) {
-    return await this.consultorioServices.findById(id);
-  }
   // Para eliminar el logo de la empresa
-  private async removeFile(logo: string, id_logo: string) {
+  async removeFile(logo: string, id_logo: string) {
     if (logo && id_logo) await cloudinary.uploader.destroy(id_logo);
   }
 }

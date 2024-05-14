@@ -1,12 +1,13 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
+import { AddNewServicesForMedicoWithDni } from 'src/modules/servicios/dto/create-servicio.dto';
 import { CreateMedicoDto } from '../dto/create-medico.dto';
 import { UpdateMedicoDto } from '../dto/update-medico.dto';
 import { MedicosService } from '../services/medicos.service';
@@ -20,9 +21,21 @@ export class MedicosController {
     return this.medicosService.create(createMedicoDto);
   }
 
+  @Post('/create-services/:dni')
+  asignarServices(
+    @Body() servicios: AddNewServicesForMedicoWithDni,
+    @Param('dni') dni: string,
+  ) {
+    return this.medicosService.addNewServicesForMedicoWithDni(servicios, dni);
+  }
+
   @Get()
   findAll() {
     return this.medicosService.findAll();
+  }
+  @Get(':id')
+  findByMedico(@Param('id') id: string) {
+    return this.medicosService.findById(id);
   }
 
   @Patch(':id')

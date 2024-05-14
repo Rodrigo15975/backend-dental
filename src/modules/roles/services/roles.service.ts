@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { REPOSITORY_ROLE, RepositoryRole } from '../repository/repository-role';
 import { CreateRoleDto } from '../dto/create-role.dto';
+import { RolesKey } from '../entities/default-role';
+import { REPOSITORY_ROLE, RepositoryRole } from '../repository/repository-role';
 
 @Injectable()
 export class RolesService {
@@ -12,7 +13,7 @@ export class RolesService {
     return await this.repositoryRole.createRole(role);
   }
 
-  async findOne(role: string) {
+  async findOne(role: RolesKey) {
     return await this.repositoryRole.findRole(role);
   }
 }

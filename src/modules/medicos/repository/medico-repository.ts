@@ -1,3 +1,4 @@
+import { PipelineStage } from 'mongoose';
 import { CreateMedicoDto } from '../dto/create-medico.dto';
 import { UpdateMedicoDto } from '../dto/update-medico.dto';
 import { Medico } from '../entities/medico.entity';
@@ -7,7 +8,17 @@ export const MEDICO_REPOSITORY = 'RepositoryMedico';
 export interface MedicoRepository {
   create(createMedicoDto: CreateMedicoDto): Promise<Medico>;
   update(id: string, updateMedicoDto: UpdateMedicoDto): Promise<Medico>;
+
   delete(id: string): Promise<void>;
+  deleteServicesForMedico(id: string): Promise<void>;
+
+  aggregateGeneric<T>(pipeline: PipelineStage[]): Promise<T>;
+
+  updateProfile(
+    id: string,
+    id_perfil: string,
+    url_perfil: string,
+  ): Promise<void>;
 
   findAllMedicos(): Promise<Medico[]>;
 

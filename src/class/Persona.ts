@@ -1,8 +1,8 @@
 import { Prop } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { Role } from 'src/modules/roles/entities/role.entity';
 
-export class Persona {
+export class Persona extends Document {
   @Prop({
     unique: true,
     required: true,
@@ -69,6 +69,11 @@ export class Persona {
     trim: true,
   })
   url_perfil: string;
+
+  @Prop({
+    trim: true,
+  })
+  id_perfil: string;
 
   @Prop({
     lowercase: true,

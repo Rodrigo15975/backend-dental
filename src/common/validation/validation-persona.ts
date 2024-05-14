@@ -5,9 +5,11 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
-import { transformDateddMMyyyy } from '../utils/dateTransform/transformDate';
+import { transformDateInternational } from '../utils/dateTransform/transformDate';
 import { generalValidation, messageValidation } from '../utils/regs/reg';
+import { RolesKey } from 'src/modules/roles/entities/default-role';
 
 export class CreatePersonaDto {
   @Matches(generalValidation.matchesDNI, { message: messageValidation.msgDNI })
@@ -18,7 +20,7 @@ export class CreatePersonaDto {
   @Matches(generalValidation.matchesLetras, {
     message: `Role ${messageValidation.msgLetras}`,
   })
-  role: string;
+  role: RolesKey;
 
   @Matches(generalValidation.matchesLetras, {
     message: `Apellidos ${messageValidation.msgLetras}`,
@@ -50,34 +52,39 @@ export class CreatePersonaDto {
   })
   genero: string;
 
-  @Transform(({ value }) => transformDateddMMyyyy(value))
-  @IsDate({ message: 'Fecha: dd/MM/yyyy' })
+  // se esta usando la international fecha
+  @Transform(({ value }) => transformDateInternational(value))
+  @IsDate({ message: 'Fecha: yyyy-MM-dd' })
   fechaNacimiento: string;
 
   @IsOptional()
   url_perfil: string;
 
   @IsOptional()
+  @ValidateIf((_, value) => value === undefined || value === null)
   @Matches(generalValidation.matchesLetras, {
     message: `Departamento ${messageValidation.msgLetras}`,
   })
-  departamento: string;
+  departamento?: string | undefined;
 
   @IsOptional()
+  @ValidateIf((_, value) => value === undefined || value === null)
   @Matches(generalValidation.matchesLetras, {
     message: `Distrito ${messageValidation.msgLetras}`,
   })
-  distrito: string;
+  distrito?: string | undefined;
 
   @IsOptional()
+  @ValidateIf((_, value) => value === undefined || value === null)
   @Matches(generalValidation.matchesLetras, {
     message: `Ciudad ${messageValidation.msgLetras}`,
   })
-  ciudad: string;
+  ciudad?: string | undefined;
 
   @IsOptional()
+  @ValidateIf((_, value) => value === undefined || value === null)
   @Matches(generalValidation.matchesDireccion, {
     message: `Dirección ${messageValidation.msgDireccion}`,
   })
-  direccion: string;
+  direccion?: string | undefined;
 }

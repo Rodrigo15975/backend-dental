@@ -1,55 +1,67 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { verifyPassword } from 'src/common/utils/argon2/argonHash';
-import { AuthData } from '../types/type-auth';
 import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
-import { UsuarioFindService } from 'src/modules/usuarios/services/find/find.service';
+import { verifyPassword } from 'src/common/utils/argon2/argonHash';
+import { MedicosService } from 'src/modules/medicos/services/medicos.service';
+import { UsuariosService } from 'src/modules/usuarios/services/usuarios.service';
+import { AuthData } from '../types/type-auth';
+import { RolesKey } from 'src/modules/roles/entities/default-role';
+
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly handlesErrors: HandleErrors,
-    private readonly usuarioFindServices: UsuarioFindService,
+    private readonly usuarioServices: UsuariosService,
+    private readonly medicoServices: MedicosService,
   ) {}
 
   async signIn(authData: AuthData) {
-    const { contraseña, dni, celular, email } = authData;
-    if (dni) return await this.sigInWithDni(dni, contraseña);
-    if (email) return await this.sigInWithEmail(email, contraseña);
-    if (celular) return await this.sigInWithPhone(celular, contraseña);
+    return await this.authMedicOrUser(authData);
   }
-  async sigInWithPhone(celular: string, contraseña: string) {
-    const usuario = await this.usuarioFindServices.findByPhone(celular);
-    const password = await verifyPassword(usuario.contraseña, contraseña);
 
-    if (!password)
+  async authMedicOrUser(auth: AuthData) {
+    const { contraseña, identifier } = auth;
+    const [usuario, medico] = await Promise.all([
+      this.usuarioServices.findAuthByUsuario(identifier),
+      this.medicoServices.findAuthByMedico(identifier),
+    ]);
+    if (usuario)
+      return await this.authLogin(
+        usuario.contraseña,
+        contraseña,
+        usuario.id,
+        'USUARIO',
+      );
+    if (medico)
+      return await this.authLogin(
+        medico.contraseña,
+        contraseña,
+        medico.id,
+        'MEDICO',
+      );
+    this.handlesErrors.handleErrorsBadRequestException(
+      'Credenciales incorrectas',
+    );
+  }
+
+  // General, auth (medico,usuario)
+  private async authLogin(
+    hash: string,
+    contraseña: string,
+    id: string,
+    role: RolesKey,
+  ) {
+    const passwordCorrect = await verifyPassword(hash, contraseña);
+    if (!passwordCorrect)
       this.handlesErrors.handleErrorsBadRequestException(
         'Credenciales incorrectas',
       );
-    return await this.getToken(usuario.id);
+    return await this.getToken(id, role);
   }
-  async sigInWithDni(dni: string, contraseña: string) {
-    const usuario = await this.usuarioFindServices.findByDni(dni);
-    const password = await verifyPassword(usuario.contraseña, contraseña);
 
-    if (!password)
-      this.handlesErrors.handleErrorsBadRequestException(
-        'Credenciales incorrectas',
-      );
-    return await this.getToken(usuario.id);
-  }
-  async sigInWithEmail(email: string, contraseña: string) {
-    const usuario = await this.usuarioFindServices.findByEmail(email);
-    const password = await verifyPassword(usuario.contraseña, contraseña);
-
-    if (!password)
-      this.handlesErrors.handleErrorsBadRequestException(
-        'Credenciales incorrectas',
-      );
-    return await this.getToken(usuario.id);
-  }
-  async getToken(id: string) {
-    const payload = { id };
+  private async getToken(id: string, role: RolesKey) {
+    const payload = { id, role };
     const accessToken = await this.jwtService.signAsync(payload);
     return accessToken;
   }

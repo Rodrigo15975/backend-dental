@@ -1,11 +1,11 @@
-import { CreateServicioDto } from '../dto/create-servicio.dto';
+import { PropsCreateServicioDto } from '../dto/create-servicio.dto';
 import { UpdateServicioDto } from '../dto/update-servicio.dto';
 import { Servicio } from '../entities/servicio.entity';
 
 export const SERVICIO_REPOSITORY = 'ServicioRepository';
 
 export interface ServicioRepository {
-  create(createServiceDto: CreateServicioDto): Promise<Servicio>;
+  create(createServiceDto: PropsCreateServicioDto): Promise<Servicio>;
   delete(id: string): Promise<void>;
   update(id: string, updateServiceDto: UpdateServicioDto): Promise<Servicio>;
 

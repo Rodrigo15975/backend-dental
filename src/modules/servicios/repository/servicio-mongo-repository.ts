@@ -1,10 +1,10 @@
 import { HttpCode, Injectable } from '@nestjs/common';
-import { ServicioRepository } from './servicio-repository';
-import { Servicio } from '../entities/servicio.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateServicioDto } from '../dto/create-servicio.dto';
+import { PropsCreateServicioDto } from '../dto/create-servicio.dto';
 import { UpdateServicioDto } from '../dto/update-servicio.dto';
+import { Servicio } from '../entities/servicio.entity';
+import { ServicioRepository } from './servicio-repository';
 
 @Injectable()
 export class ServicioMongoRespository implements ServicioRepository {
@@ -16,7 +16,8 @@ export class ServicioMongoRespository implements ServicioRepository {
       $set: { count: +1 },
     });
   }
-  async create(createServiceDto: CreateServicioDto): Promise<Servicio> {
+
+  async create(createServiceDto: PropsCreateServicioDto): Promise<Servicio> {
     return await this.servicioModel.create(createServiceDto);
   }
   async findById(id: string): Promise<Servicio> {
@@ -28,7 +29,10 @@ export class ServicioMongoRespository implements ServicioRepository {
     await this.servicioModel.findByIdAndDelete(id).exec();
   }
   async findAllServices(): Promise<Servicio[]> {
-    return await this.servicioModel.find().exec();
+    return await this.servicioModel
+      .find()
+      .select(['costo', 'nombre', '_id'])
+      .exec();
   }
   async findByService(nombre: string): Promise<Servicio> {
     return await this.servicioModel.findOne({ nombre }).exec();

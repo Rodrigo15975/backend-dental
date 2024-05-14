@@ -22,6 +22,11 @@ export class Consultario {
 
   @Prop({
     trim: true,
+  })
+  nombre_comercial: string;
+
+  @Prop({
+    trim: true,
     required: true,
     unique: true,
   })
@@ -31,7 +36,7 @@ export class Consultario {
     trim: true,
     lowercase: true,
   })
-  razonSocial: string;
+  razon_social: string;
 
   @Prop({
     trim: true,
@@ -45,11 +50,13 @@ export class Consultario {
 
   @Prop({
     trim: true,
+    lowercase: true,
   })
   estado: string;
 
   @Prop({
     trim: true,
+    lowercase: true,
   })
   condicion: string;
 
@@ -76,11 +83,6 @@ export class Consultario {
     lowercase: true,
   })
   distrito: string;
-
-  @Prop({
-    trim: true,
-  })
-  ubigeo: string;
 
   @Prop({
     default: false,
