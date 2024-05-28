@@ -10,5 +10,8 @@ export const projectStageMedico: PipelineStage = {
     'servicios.createdAt': 0,
     'servicios.updatedAt': 0,
     'servicios.__v': 0,
+    'asistencia.createdAt': 0,
+    'asistencia.updatedAt': 0,
+    'asistencia.__v': 0,
   },
 };

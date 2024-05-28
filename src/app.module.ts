@@ -9,6 +9,16 @@ import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { ApiRucModule } from './services/apis/ruc/api-ruc.module';
 import { CloudinaryUsuarioModule } from './services/cloudinary-usuario/cloudinary-usuario.module';
 import { ApiDniModule } from './services/apis/dni/api-dni.module';
+import { AsistenciaModule } from './modules/asistencia/asistencia.module';
+import { PrescripcionesModule } from './modules/prescripciones/prescripciones.module';
+import { RecetasModule } from './modules/recetas/recetas.module';
+import { HistorialClinicaModule } from './modules/historial-clinica/historial-clinica.module';
+import { ApoderadoModule } from './modules/apoderado/apoderado.module';
+import { EtiquetasModule } from './modules/etiquetas/etiquetas.module';
+import { NotaModule } from './modules/nota/nota.module';
+import { AlergiasModule } from './modules/alergias/alergias.module';
+import { ArchivosModule } from './modules/archivos/archivos.module';
+import { PacientesModule } from './modules/pacientes/pacientes.module';
 @Module({
   imports: [
     RolesModule,
@@ -21,6 +31,16 @@ import { ApiDniModule } from './services/apis/dni/api-dni.module';
     ServiciosModule,
     CloudinaryUsuarioModule,
     ApiDniModule,
+    AsistenciaModule,
+    PrescripcionesModule,
+    RecetasModule,
+    HistorialClinicaModule,
+    ApoderadoModule,
+    EtiquetasModule,
+    NotaModule,
+    AlergiasModule,
+    ArchivosModule,
+    PacientesModule,
   ],
   controllers: [],
 })

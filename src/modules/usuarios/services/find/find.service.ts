@@ -53,10 +53,6 @@ export class UsuarioFindService implements UsuarioFind {
       projectUsuarioStage,
     );
     const usuarios = await this.aggregateGeneric<Usuario[]>(pipeline);
-    if (usuarios.length === 0)
-      this.handleErrors.handleSendMessage(
-        'La lista de usuarios está sin datos',
-      );
     return usuarios;
   }
   async findByDni(dni: string): Promise<Usuario> {
@@ -87,12 +83,9 @@ export class UsuarioFindService implements UsuarioFind {
     await this.verifyId(id);
     const pipeline: PipelineStage[] = AggregateQuery.pipeline(
       { $match: { _id: new Types.ObjectId(id) } },
-      ...AggregateQuery.buildLookupStage('roles', 'role'),
-      {
-        $addFields: {
-          role: '$role.role',
-        },
-      },
+      ...lookupRolesStage,
+      addFieldsRolesStage,
+      unwindRoleStage,
       { $project: { contraseña: 0 } },
     );
     const user = await this.aggregateGeneric<Usuario>(pipeline);

@@ -10,6 +10,7 @@ import {
 } from '../../repository/medico-repository';
 import { MedicoFindService } from '../find/find.service';
 import { MedicoUpdate } from './types/typesUpdate';
+import { ServicioFindService } from 'src/modules/servicios/services/find/find.service';
 
 @Injectable()
 export class MedicoUpdateService implements MedicoUpdate {
@@ -19,7 +20,16 @@ export class MedicoUpdateService implements MedicoUpdate {
     private readonly handleErros: HandleErrors,
     private readonly medicoFindService: MedicoFindService,
     private readonly usuarioFindService: UsuarioFindService,
+    private readonly serviciosFindServices: ServicioFindService,
   ) {}
+
+  async updateActiveMedico(id: string): Promise<void> {
+    const medico = await this.medicoFindService.findByIdMedico(id);
+    await medico.updateOne({
+      activo: true,
+    });
+    this.handleErros.handleSendMessage('Médico activo nuevamente');
+  }
 
   async updateProfile(
     id: string,
@@ -46,6 +56,14 @@ export class MedicoUpdateService implements MedicoUpdate {
     this.handleErros.handleSendMessage(
       'El médico fue actualizado exitosamente',
     );
+  }
+  async updateServicesOfMedicos(id: string, updateMedicoDto: UpdateMedicoDto) {
+    const servicesIDS = await this.serviciosFindServices.findGetServicesAllId(
+      updateMedicoDto.servicios,
+    );
+    // ya está descansa y ve que falta en el eraser las tareas
+    await this.medicoRepository.update(id, { servicios: servicesIDS });
+    this.handleErros.handleSendMessage('Servicios actualizados correctamente');
   }
 
   async addNewServicesForMedicoWithDni(

@@ -11,9 +11,12 @@ export class AggregateQuery {
           as: as,
         },
       },
-      // { $unwind: { path: `$${as}`, preserveNullAndEmptyArrays: true } },
     ];
   }
+  // Aplana los datos pero si  es un array vacio lo quita y quita todo los datos
+  // importante es mejor hacerlo individual
+  // { $unwind: { path: `$${as}`, preserveNullAndEmptyArrays: true } },
+
   static pipeline(...stage1: PipelineStage[]): PipelineStage[] {
     return [...stage1];
   }

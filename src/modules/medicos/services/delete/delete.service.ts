@@ -1,11 +1,12 @@
 import { HttpCode, Inject, Injectable } from '@nestjs/common';
+import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
+import { UsuarioFileService } from 'src/modules/usuarios/services/file/file.service';
 import {
   MEDICO_REPOSITORY,
   MedicoRepository,
 } from '../../repository/medico-repository';
-import { MedicoDelete } from './types/typesDelete';
 import { MedicoFindService } from '../find/find.service';
-import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
+import { MedicoDelete } from './types/typesDelete';
 
 @Injectable()
 export class MedicoDeleteService implements MedicoDelete {
@@ -14,14 +15,20 @@ export class MedicoDeleteService implements MedicoDelete {
     private readonly medicoRepository: MedicoRepository,
     private readonly medicoFindServices: MedicoFindService,
     private readonly handleErrors: HandleErrors,
+    // general(medico,usuarios)
+    private readonly usuariosFileServices: UsuarioFileService,
   ) {}
   @HttpCode(204)
   async delete(id: string): Promise<void> {
-    await this.medicoFindServices.findById(id);
-    await this.medicoRepository.delete(id);
-    this.handleErrors.handleSendMessage(
-      'El médico fue eliminado correctamente',
+    const medico = await this.medicoFindServices.findByIdMedico(id);
+    await this.usuariosFileServices.removeFile(
+      medico.id_perfil,
+      medico.url_perfil,
     );
+    await medico.updateOne({
+      activo: false,
+    });
+    this.handleErrors.handleSendMessage('El médico inactivo correctamente');
   }
 
   async deleteServicesForMedico(id: string): Promise<void> {

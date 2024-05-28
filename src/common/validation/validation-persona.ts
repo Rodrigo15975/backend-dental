@@ -37,11 +37,15 @@ export class CreatePersonaDto {
   })
   contraseña: string;
 
+  @IsOptional()
+  @ValidateIf((_, value) => value === undefined || value === null)
   @Matches(generalValidation.matchesEmail, {
     message: `Email ${messageValidation.msgEmail}`,
   })
   email: string;
 
+  @IsOptional()
+  @ValidateIf((_, value) => value === undefined || value === null)
   @Matches(generalValidation.matchesPhones, {
     message: `Celular ${messageValidation.msgPhones}`,
   })

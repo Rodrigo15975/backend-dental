@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { MedicosService } from 'src/modules/medicos/services/medicos.service';
 import { RolesKey } from 'src/modules/roles/entities/default-role';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
@@ -17,7 +16,6 @@ export class UsuariosService {
     private readonly usuarioUpdateServices: UsuarioUpdateService,
     private readonly usuarioDeleteServices: UsuarioDeleteService,
     private readonly usuarioFileServices: UsuarioFileService,
-    private readonly medicoServices: MedicosService,
   ) {}
 
   async create(createUsuarioDto: CreateUsuarioDto) {
@@ -48,15 +46,13 @@ export class UsuariosService {
     return await this.usuarioFindServices.findById(id);
   }
 
-  async remove(id: string, role: RolesKey) {
-    const usuario = await this.usuarioFileServices.verifyRole(id, role);
-
+  async remove(id: string) {
+    const usuario = await this.findById(id);
     await this.usuarioFileServices.removeFile(
       usuario.id_perfil,
       usuario.url_perfil,
     );
-    if (role === 'MEDICO') return await this.medicoServices.remove(id);
-    return await this.usuarioDeleteServices.delete(id);
+    await this.usuarioDeleteServices.delete(id);
   }
 
   async findAuthByUsuario(identifier: string) {

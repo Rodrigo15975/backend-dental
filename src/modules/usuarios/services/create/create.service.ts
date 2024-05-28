@@ -41,6 +41,6 @@ export class UsuarioCreateService implements UsuarioCreate {
       role: _id,
     });
 
-    this.handleErrors.handleSendMessage('Creación exitosa');
+    this.handleErrors.handleSendMessage('Usuario creado correctamente.');
   }
 }

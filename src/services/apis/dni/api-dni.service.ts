@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class ApiDniService {
@@ -22,7 +22,7 @@ export class ApiDniService {
       return data;
     } catch (error) {
       console.log(error);
-      throw new Error('Error en la petición');
+      throw new InternalServerErrorException('Error en la petición');
     }
   }
 }

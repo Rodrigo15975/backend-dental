@@ -29,6 +29,11 @@ export class MedicosController {
     return this.medicosService.addNewServicesForMedicoWithDni(servicios, dni);
   }
 
+  @Patch('/active/medico/:id')
+  activeMedico(@Param('id') id: string) {
+    return this.medicosService.updateActiveMedico(id);
+  }
+
   @Get()
   findAll() {
     return this.medicosService.findAll();
@@ -41,6 +46,13 @@ export class MedicosController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMedicoDto: UpdateMedicoDto) {
     return this.medicosService.update(id, updateMedicoDto);
+  }
+  @Patch('servicios/:id')
+  updateServicesMedico(
+    @Param('id') id: string,
+    @Body() updateMedicoDto: UpdateMedicoDto,
+  ) {
+    return this.medicosService.updateServicesOfMedicos(id, updateMedicoDto);
   }
 
   @Delete(':id')

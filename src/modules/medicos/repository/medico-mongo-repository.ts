@@ -11,7 +11,6 @@ export class MedicoMongoRepository implements MedicoRepository {
   constructor(
     @InjectModel(Medico.name) private readonly medicoModel: Model<Medico>,
   ) {}
-
   async deleteServicesForMedico(id: string): Promise<void> {
     // El pull sol ose usa en arrays
     await this.medicoModel.updateMany(
@@ -32,14 +31,16 @@ export class MedicoMongoRepository implements MedicoRepository {
   async aggregate(pipeline: PipelineStage[]): Promise<Medico[]> {
     return await this.medicoModel.aggregate(pipeline).exec();
   }
+
   async aggregateGeneric<T>(pipeline: PipelineStage[]): Promise<T> {
     const result = await this.medicoModel.aggregate<T>(pipeline);
     return result as T;
   }
 
   async create(createMedicoDto: CreateMedicoDto): Promise<Medico> {
-    return await this.medicoModel.create(createMedicoDto);
+    return await this.medicoModel.create({ ...createMedicoDto, activo: true });
   }
+
   @HttpCode(204)
   async delete(id: string): Promise<void> {
     return await this.medicoModel.findByIdAndDelete(id);

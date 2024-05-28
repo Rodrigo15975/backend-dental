@@ -2,9 +2,33 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
+  Alergia,
+  SchemaAlergia,
+} from 'src/modules/alergias/entities/alergia.entity';
+import {
+  Apoderado,
+  SchemaApoderado,
+} from 'src/modules/apoderado/entities/apoderado.entity';
+import {
+  Archivo,
+  SchemaArchivo,
+} from 'src/modules/archivos/entities/archivo.entity';
+import {
+  Asistencia,
+  SchemaAsistencia,
+} from 'src/modules/asistencia/entities/asistencia.entity';
+import {
   Consultario,
   SchemaConsultorio,
 } from 'src/modules/consultario/entities/consultario.entity';
+import {
+  Etiqueta,
+  SchemaEtiquetas,
+} from 'src/modules/etiquetas/entities/etiqueta.entity';
+import {
+  HistorialClinica,
+  SchemaHistorialClinica,
+} from 'src/modules/historial-clinica/entities/historial-clinica.entity';
 import {
   Horario,
   SchemaHorario,
@@ -13,6 +37,19 @@ import {
   Medico,
   SchemaMedico,
 } from 'src/modules/medicos/entities/medico.entity';
+import { Nota, SchemaNota } from 'src/modules/nota/entities/nota.entity';
+import {
+  Paciente,
+  SchemaPaciente,
+} from 'src/modules/pacientes/entities/paciente.entity';
+import {
+  Prescripciones,
+  SchemaPrescripciones,
+} from 'src/modules/prescripciones/entities/prescripcione.entity';
+import {
+  Receta,
+  SchemaReceta,
+} from 'src/modules/recetas/entities/receta.entity';
 import { Role, SchemaRole } from 'src/modules/roles/entities/role.entity';
 import {
   SchemaServicios,
@@ -34,6 +71,47 @@ import {
     }),
 
     MongooseModule.forFeature([
+      {
+        name: Paciente.name,
+        schema: SchemaPaciente,
+      },
+      {
+        name: Archivo.name,
+        schema: SchemaArchivo,
+      },
+      {
+        name: Alergia.name,
+        schema: SchemaAlergia,
+      },
+      {
+        name: Nota.name,
+        schema: SchemaNota,
+      },
+
+      {
+        name: Etiqueta.name,
+        schema: SchemaEtiquetas,
+      },
+      {
+        name: Apoderado.name,
+        schema: SchemaApoderado,
+      },
+      {
+        name: HistorialClinica.name,
+        schema: SchemaHistorialClinica,
+      },
+      {
+        name: Receta.name,
+        schema: SchemaReceta,
+      },
+      {
+        name: Prescripciones.name,
+        schema: SchemaPrescripciones,
+      },
+      {
+        name: Asistencia.name,
+        schema: SchemaAsistencia,
+      },
       {
         name: Servicio.name,
         schema: SchemaServicios,

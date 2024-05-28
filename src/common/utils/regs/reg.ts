@@ -8,6 +8,7 @@ export const generalValidation = {
   matchesLetras: /^[.\sA-ZÁÉÍÓÚÜÑ?]+$/i,
   matchesRazonSocial: /^[\w\d\s.,()-]+$/,
   matchesCosto: /^\d+(\.\d+)?$/,
+  matchesNotaAndAlergia: /^[a-zA-Z0-9 áéíóúÁÉÍÓÚüÜñÑ]*$/,
 };
 
 export const messageValidation = {

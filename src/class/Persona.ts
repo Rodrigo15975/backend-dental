@@ -31,26 +31,10 @@ export class Persona extends Document {
   apellidos: string;
 
   @Prop({
-    required: true,
     trim: true,
+    required: false,
   })
-  contraseña: string;
-
-  @Prop({
-    lowercase: true,
-    // vER SI DEJA PASAR EN EL DTO Y CREACION ya que es opcional
-    required: true,
-    trim: true,
-    unique: true,
-  })
-  email: string;
-
-  @Prop({
-    required: true,
-    unique: true,
-    trim: true,
-  })
-  celular: string;
+  contraseña?: string;
 
   @Prop({
     required: true,

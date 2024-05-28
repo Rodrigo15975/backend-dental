@@ -1,21 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PipelineStage, Types } from 'mongoose';
 import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
-import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
-import { generalValidation } from 'src/common/utils/regs/reg';
-import { Medico } from '../../entities/medico.entity';
+import { projectStageMedico } from 'src/common/pipeline/medicos/pipelineMedicos';
 import {
   addFieldsRolesStage,
   lookupRolesStage,
   unwindRoleStage,
 } from 'src/common/pipeline/roles/pipelineRoles';
 import { lookupServiciosStage } from 'src/common/pipeline/servicios/pipelineServicios';
+import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
+import { generalValidation } from 'src/common/utils/regs/reg';
+import { Medico } from '../../entities/medico.entity';
 import {
   MEDICO_REPOSITORY,
   MedicoRepository,
 } from '../../repository/medico-repository';
 import { MedicoFind } from './types/typesFind';
-import { projectStageMedico } from 'src/common/pipeline/medicos/pipelineMedicos';
+import { lookupAsistenciaStage } from 'src/common/pipeline/asistencia/pipelineAsistencia';
 
 @Injectable()
 export class MedicoFindService implements MedicoFind {
@@ -53,12 +54,13 @@ export class MedicoFindService implements MedicoFind {
       unwindRoleStage,
       addFieldsRolesStage,
 
+      ...lookupAsistenciaStage,
+
       ...lookupServiciosStage,
       projectStageMedico,
     );
     const medicos = await this.aggregateGeneric<Medico[]>(pipeline);
-    if (medicos.length === 0)
-      this.handleErrors.handleSendMessage('La lista de médicos está sin datos');
+
     return medicos;
   }
   async findByDni(dni: string): Promise<Medico> {
@@ -78,7 +80,10 @@ export class MedicoFindService implements MedicoFind {
       );
     return medicoFound;
   }
-
+  // Este devuelve todo los metodos
+  async findByIdMedico(id: string): Promise<Medico> {
+    return await this.verifyId(id);
+  }
   private async verifyId(id: string) {
     const medico = await this.medicoRepository.findById(id);
     if (!medico)
@@ -88,6 +93,7 @@ export class MedicoFindService implements MedicoFind {
     return medico;
   }
 
+  // Este no trae los metodos por eso cree otro
   async findById(id: string): Promise<Medico> {
     await this.verifyId(id);
     const pipeline: PipelineStage[] = AggregateQuery.pipeline(
@@ -95,6 +101,7 @@ export class MedicoFindService implements MedicoFind {
       ...lookupRolesStage,
       addFieldsRolesStage,
       unwindRoleStage,
+      ...lookupServiciosStage,
       { $project: { contraseña: 0 } },
     );
     const data = await this.aggregateGeneric<Medico>(pipeline);

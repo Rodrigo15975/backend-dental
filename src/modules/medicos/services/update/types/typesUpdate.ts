@@ -8,8 +8,14 @@ export interface MedicoUpdate {
     url_perfil: string,
   ): Promise<void>;
 
+  updateActiveMedico(id: string): Promise<void>;
   addNewServicesForMedicoWithDni(
     ids: AddNewServicesForMedicoWithDni,
     idMedico: string,
+  ): Promise<void>;
+
+  updateServicesOfMedicos(
+    id: string,
+    updateMedicoDto: UpdateMedicoDto,
   ): Promise<void>;
 }

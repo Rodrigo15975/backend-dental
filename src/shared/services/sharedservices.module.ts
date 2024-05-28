@@ -47,7 +47,76 @@ import { ConfigModule } from '@nestjs/config';
 // Files General(medico,usuario)
 import { UsuarioFileService } from 'src/modules/usuarios/services/file/file.service';
 import { CloudinaryUsuarioService } from 'src/services/cloudinary-usuario/cloudinary-usuario.service';
+
+// querys
 import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
+
+// asistencia
+import { AsistenciaService } from 'src/modules/asistencia/services/asistencia.service';
+import { AsistenciaCreateService } from 'src/modules/asistencia/services/create/create.service';
+import { AsistenciaUpdateService } from 'src/modules/asistencia/services/update/update.service';
+import { ASISTENCIA_REPOSITORY } from 'src/modules/asistencia/repository/asistencia-repository';
+import { AsistenciaRepositoryMongo } from 'src/modules/asistencia/repository/asistencia-repository-mongo';
+// Prescripciones
+import { PrescripcionesService } from 'src/modules/prescripciones/services/prescripciones.service';
+import { PrescripcionesCreateService } from 'src/modules/prescripciones/services/create/create.service';
+import { PRESCRIPCIONE_REPOSITORY } from 'src/modules/prescripciones/repository/prescripcion-repository';
+import { PrescripcionesRepositoryMongo } from 'src/modules/prescripciones/repository/prescripcion-repository.mongo';
+import { PrescripcionesFindService } from 'src/modules/prescripciones/services/find/find.service';
+// recetas
+import { RecetasService } from 'src/modules/recetas/services/recetas.service';
+import { RecetaCreateService } from 'src/modules/recetas/services/create/create.service';
+import { RECETA_REPOSITORY } from 'src/modules/recetas/repository/receta-repository';
+import { RecetaRepositoryMongo } from 'src/modules/recetas/repository/receta-repository-mongo';
+// Historial-clinica
+import { HistorialClinicaService } from 'src/modules/historial-clinica/services/historial-clinica.service';
+import { HISTORIAL_CLINICA_REPOSITORY } from 'src/modules/historial-clinica/repository/historial-clinica-repository';
+import { HistorialClinicaRepositoryMongo } from 'src/modules/historial-clinica/repository/historial-clinica-repository-mongo';
+import { HistorialClinicoCreateService } from 'src/modules/historial-clinica/services/create/create.service';
+import { HistorialClinicaDeleteService } from 'src/modules/historial-clinica/services/delete/delete.service';
+// apoderado
+import { ApoderadoService } from 'src/modules/apoderado/services/apoderado.service';
+import { ApoderadoFindService } from 'src/modules/apoderado/services/find/find.service';
+import { ApoderadoCreateService } from 'src/modules/apoderado/services/create/create.service';
+import { APODERADO_REPOSITORY } from 'src/modules/apoderado/repository/apoderado-repository';
+import { ApoderadoRepositoryMongo } from 'src/modules/apoderado/repository/apoderado-repository.mongo';
+import { ApoderadoDeleteService } from 'src/modules/apoderado/services/delete/delete.service';
+// dni api
+import { ApiDniService } from 'src/services/apis/dni/api-dni.service';
+// etiqueta
+import { EtiquetasService } from 'src/modules/etiquetas/services/etiquetas.service';
+import { EtiquetaCreateService } from 'src/modules/etiquetas/services/create/create.service';
+import { EtiquetaFindService } from 'src/modules/etiquetas/services/find/find.service';
+import { EtiquetaRemoveService } from 'src/modules/etiquetas/services/remove/remove.service';
+import { ETIQUETA_REPOSITORY } from 'src/modules/etiquetas/repository/etiqueta-repository';
+import { EtiquetaRepositoryMongo } from 'src/modules/etiquetas/repository/etiqueta-repositor.mongo';
+// notas y laergias
+import { NotaService } from 'src/modules/nota/services/nota.service';
+import { NotaCreateService } from 'src/modules/nota/services/create/create.service';
+import { NotasDeleteService } from 'src/modules/nota/services/delete/delete.service';
+import { NotaUpdateService } from 'src/modules/nota/services/update/update.service';
+
+import { AlergiasService } from 'src/modules/alergias/services/alergias.service';
+import { AlergiasCreateService } from 'src/modules/alergias/services/create/create.service';
+import { AlergiasUpdateeService } from 'src/modules/alergias/services/update/update.service';
+import { AlergiasDeleteService } from 'src/modules/alergias/services/delete/delete.service';
+
+// archivos
+import { ArchivosService } from 'src/modules/archivos/services/archivos.service';
+import { ArchivoCreateService } from 'src/modules/archivos/services/create/create.service';
+import { ARCHIVO_REPOSITORY } from 'src/modules/archivos/repository/archivo-repository';
+import { ArchivoRepositoryMongo } from 'src/modules/archivos/repository/archivo-repository-mongo';
+import { ArchivoFileService } from 'src/modules/archivos/services/file/file.service';
+import { ArchivoDeleteService } from 'src/modules/archivos/services/delete/delete.service';
+//pacientes
+import { PacientesService } from 'src/modules/pacientes/services/pacientes.service';
+import { PacienteCreateService } from 'src/modules/pacientes/services/create/create.service';
+import { PacienteUpdateService } from 'src/modules/pacientes/services/update/update.service';
+import { PacienteDeleteService } from 'src/modules/pacientes/services/delete/delete.service';
+import { PacienteFindService } from 'src/modules/pacientes/services/find/find.service';
+import { PACIENTE_REPOSITORY } from 'src/modules/pacientes/repository/paciente-repository';
+import { PacienteRepositoryMongo } from 'src/modules/pacientes/repository/paciente-repository-mongo';
+import { PacienteCreateMenorService } from 'src/modules/pacientes/services/create/create-menor.service';
 
 @Module({
   imports: [
@@ -58,6 +127,94 @@ import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
     HandleErrors,
   ],
   providers: [
+    // pacientes
+    PacientesService,
+    PacienteCreateMenorService,
+    PacienteCreateService,
+    PacienteFindService,
+    PacienteDeleteService,
+    PacienteUpdateService,
+    {
+      provide: PACIENTE_REPOSITORY,
+      useClass: PacienteRepositoryMongo,
+    },
+
+    // archivos
+    ArchivoCreateService,
+    ArchivosService,
+    ArchivoDeleteService,
+    ArchivoFileService,
+    {
+      provide: ARCHIVO_REPOSITORY,
+      useClass: ArchivoRepositoryMongo,
+    },
+    //  notas
+    NotaService,
+    NotaCreateService,
+    NotaUpdateService,
+    NotasDeleteService,
+    // alergias
+    AlergiasService,
+    AlergiasCreateService,
+    AlergiasUpdateeService,
+    AlergiasDeleteService,
+
+    // eitquetas
+    EtiquetasService,
+    EtiquetaCreateService,
+    EtiquetaFindService,
+    EtiquetaRemoveService,
+    {
+      provide: ETIQUETA_REPOSITORY,
+      useClass: EtiquetaRepositoryMongo,
+    },
+
+    // api-dni
+    ApiDniService,
+
+    // Apoderado
+    ApoderadoService,
+    ApoderadoFindService,
+    ApoderadoDeleteService,
+    ApoderadoCreateService,
+    {
+      provide: APODERADO_REPOSITORY,
+      useClass: ApoderadoRepositoryMongo,
+    },
+
+    // historial-clinico
+    HistorialClinicaService,
+    HistorialClinicoCreateService,
+    HistorialClinicaDeleteService,
+    {
+      provide: HISTORIAL_CLINICA_REPOSITORY,
+      useClass: HistorialClinicaRepositoryMongo,
+    },
+
+    // RECETAS
+    RecetasService,
+    RecetaCreateService,
+    {
+      provide: RECETA_REPOSITORY,
+      useClass: RecetaRepositoryMongo,
+    },
+    // prescripciones
+    PrescripcionesService,
+    PrescripcionesFindService,
+    PrescripcionesCreateService,
+    {
+      provide: PRESCRIPCIONE_REPOSITORY,
+      useClass: PrescripcionesRepositoryMongo,
+    },
+    // Asistencia
+    AsistenciaCreateService,
+    AsistenciaUpdateService,
+    AsistenciaService,
+    {
+      provide: ASISTENCIA_REPOSITORY,
+      useClass: AsistenciaRepositoryMongo,
+    },
+
     AggregateQuery,
 
     // Files General(medico,usuario)
@@ -102,6 +259,63 @@ import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
     { provide: CONSULTARIO_REPOSITORY, useClass: ConsultarioMongoRespository },
   ],
   exports: [
+    // pacientes
+    PacientesService,
+    PacienteCreateMenorService,
+    PacienteCreateService,
+    PacienteFindService,
+    PacienteDeleteService,
+    PacienteUpdateService,
+    // archivos
+    ArchivoCreateService,
+    ArchivosService,
+    ArchivoFileService,
+    ArchivoDeleteService,
+    // nota
+    NotaService,
+    NotasDeleteService,
+    NotaCreateService,
+    NotaUpdateService,
+    // alergias
+    AlergiasService,
+    AlergiasDeleteService,
+    AlergiasCreateService,
+    AlergiasUpdateeService,
+
+    // Etiquetas
+    EtiquetasService,
+    EtiquetaCreateService,
+    EtiquetaFindService,
+    EtiquetaRemoveService,
+
+    // api-dni-service
+    ApiDniService,
+
+    // Apoderado
+    ApoderadoService,
+    ApoderadoFindService,
+    ApoderadoCreateService,
+    ApoderadoDeleteService,
+
+    // historial-clinico
+    HistorialClinicaService,
+    HistorialClinicoCreateService,
+    HistorialClinicaDeleteService,
+
+    // receta
+    RecetasService,
+    RecetaCreateService,
+
+    // prescripcion
+    PrescripcionesService,
+    PrescripcionesFindService,
+    PrescripcionesCreateService,
+
+    // asistencia
+    AsistenciaCreateService,
+    AsistenciaUpdateService,
+    AsistenciaService,
+
     // Agreggate
     AggregateQuery,
 

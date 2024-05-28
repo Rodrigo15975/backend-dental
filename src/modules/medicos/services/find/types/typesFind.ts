@@ -12,9 +12,11 @@ export interface MedicoFind
     | 'aggregate'
     | 'addNewServicesForMedicoWithDni'
     | 'deleteServicesForMedico'
+    | 'updateServicesOfMedicos'
   > {
   findByDniExistingInMedico(dni: string): Promise<void>;
   findByEmailExistingInMedico(email: string): Promise<void>;
   findByPhoneExistingInMedico(phone: string): Promise<void>;
   findAuthByMedico(identifier: string): Promise<Medico>;
+  findByIdMedico(id: string): Promise<Medico>;
 }

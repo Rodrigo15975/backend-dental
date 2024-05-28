@@ -1,23 +1,15 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateHorarioDto } from '../dto/create-horario.dto';
-import { UpdateHorarioDto } from '../dto/update-horario.dto';
 import { HorarioService } from '../services/horario.service';
+import { UpdateHorarioDto } from '../dto/update-horario.dto';
 
 @Controller('horario')
 export class HorarioController {
   constructor(private readonly horarioService: HorarioService) {}
 
   @Post()
-  create(@Query('id') id: string, @Body() createHorarioDto: CreateHorarioDto) {
-    return this.horarioService.create(createHorarioDto, id);
+  create(@Body() createHorarioDto: CreateHorarioDto) {
+    return this.horarioService.create(createHorarioDto);
   }
 
   @Get()
