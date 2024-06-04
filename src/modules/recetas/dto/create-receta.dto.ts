@@ -1,12 +1,12 @@
 import { IsOptional, IsString, Matches, ValidateIf } from 'class-validator';
 import { generalValidation } from 'src/common/utils/regs/reg';
 export class CreateRecetaDto {
-  @IsOptional()
   @IsString()
+  @IsOptional()
   medico: string;
 
-  @Matches(generalValidation.matchesLetras, {
-    message: 'Prescripción solo acepta letras',
+  @Matches(generalValidation.matchesLetrasAndNumbers, {
+    message: 'Prescripción solo acepta letras y numeros',
   })
   receta: string;
 
@@ -16,8 +16,8 @@ export class CreateRecetaDto {
 
   @IsOptional()
   @ValidateIf((_, value) => value === undefined || value === null)
-  @Matches(generalValidation.matchesLetras, {
-    message: 'Nota adicional solo acepta letras',
+  @Matches(generalValidation.matchesLetrasAndNumbers, {
+    message: 'Nota adicional solo acepta letras y numeros',
   })
   notaAdicional: string;
 

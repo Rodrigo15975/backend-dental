@@ -19,6 +19,10 @@ import { NotaModule } from './modules/nota/nota.module';
 import { AlergiasModule } from './modules/alergias/alergias.module';
 import { ArchivosModule } from './modules/archivos/archivos.module';
 import { PacientesModule } from './modules/pacientes/pacientes.module';
+import { DetallesServiciosModule } from './modules/detalles-servicios/detalles-servicios.module';
+import { EstadoServicioModule } from './modules/estado-servicio/estado-servicio.module';
+import { DetallesModule } from './modules/detalles/detalles.module';
+
 @Module({
   imports: [
     RolesModule,
@@ -41,6 +45,9 @@ import { PacientesModule } from './modules/pacientes/pacientes.module';
     AlergiasModule,
     ArchivosModule,
     PacientesModule,
+    DetallesServiciosModule,
+    EstadoServicioModule,
+    DetallesModule,
   ],
   controllers: [],
 })

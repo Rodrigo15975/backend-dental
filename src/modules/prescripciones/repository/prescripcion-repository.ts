@@ -9,6 +9,6 @@ export interface PrescripcionesRepository {
     createPrescripcioneDto: CreatePrescripcioneDto,
   ): Promise<Prescripciones>;
   findAll(): Promise<Prescripciones[]>;
-
+  delete(id: string): Promise<void>;
   aggregateGeneric<T>(pipeline: PipelineStage[]): Promise<T>;
 }

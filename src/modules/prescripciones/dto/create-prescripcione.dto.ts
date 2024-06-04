@@ -4,16 +4,16 @@ export class CreatePrescripcioneDto {
   @IsOptional()
   medico: string;
 
-  @Matches(generalValidation.matchesLetras, {
-    message: 'Prescripción solo acepta letras',
+  @Matches(generalValidation.matchesLetrasAndNumbers, {
+    message: 'Prescripción solo acepta letras y numeros',
   })
   prescripcion: string;
   responsabilidad: string;
 
   @IsOptional()
   @ValidateIf((_, value) => value === undefined || value === null)
-  @Matches(generalValidation.matchesLetras, {
-    message: 'Nota adicional solo acepta letras',
+  @Matches(generalValidation.matchesLetrasAndNumbers, {
+    message: 'Nota adicional solo acepta letras y numeros',
   })
   notaAdicional: string;
 

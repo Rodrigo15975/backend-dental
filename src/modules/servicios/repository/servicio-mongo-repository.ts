@@ -12,9 +12,13 @@ export class ServicioMongoRespository implements ServicioRepository {
     @InjectModel(Servicio.name) private readonly servicioModel: Model<Servicio>,
   ) {}
   async addCountByService(id: string): Promise<void> {
-    return await this.servicioModel.findByIdAndUpdate(id, {
-      $set: { count: +1 },
-    });
+    return await this.servicioModel.findByIdAndUpdate(
+      id,
+      {
+        $inc: { count: 1 },
+      },
+      { new: true },
+    );
   }
 
   async create(createServiceDto: PropsCreateServicioDto): Promise<Servicio> {

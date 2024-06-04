@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { AddNewServicesForMedicoWithDni } from 'src/modules/servicios/dto/create-servicio.dto';
+import {
+  AddNewServicesForMedicoWithDni,
+  PropsCreateServicioDto,
+} from 'src/modules/servicios/dto/create-servicio.dto';
 import { CreateMedicoDto } from '../dto/create-medico.dto';
 import { UpdateMedicoDto } from '../dto/update-medico.dto';
 import { MedicoCreateService } from './create/create.service';
@@ -17,6 +20,9 @@ export class MedicosService {
   ) {}
   async create(createMedicoDto: CreateMedicoDto) {
     return await this.medicoCreateServices.create(createMedicoDto);
+  }
+  async findAllServices(id: string): Promise<PropsCreateServicioDto[]> {
+    return await this.medicoFindServices.findAllServices(id);
   }
 
   async findAll() {

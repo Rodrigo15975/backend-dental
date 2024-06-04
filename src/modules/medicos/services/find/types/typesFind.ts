@@ -1,5 +1,6 @@
 import { Medico } from 'src/modules/medicos/entities/medico.entity';
 import { MedicoRepository } from 'src/modules/medicos/repository/medico-repository';
+import { PropsCreateServicioDto } from 'src/modules/servicios/dto/create-servicio.dto';
 
 export interface MedicoFind
   extends Omit<
@@ -19,4 +20,6 @@ export interface MedicoFind
   findByPhoneExistingInMedico(phone: string): Promise<void>;
   findAuthByMedico(identifier: string): Promise<Medico>;
   findByIdMedico(id: string): Promise<Medico>;
+
+  findAllServices(id: string): Promise<PropsCreateServicioDto[]>;
 }

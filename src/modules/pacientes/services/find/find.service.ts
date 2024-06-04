@@ -2,37 +2,38 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PipelineStage, Types } from 'mongoose';
 import {
   buildLookupStateAlergias,
-  projectAlergiasState,
   unwindAlergiasStage,
 } from 'src/common/alergia/pipelineAlergia';
 import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
+import { buildLookupApoderadoState } from 'src/common/pipeline/apoderado/pipelineApoderado';
+import { buildLookupArchivos } from 'src/common/pipeline/archivos/pipelineArchivo';
+import { buildLookupEtiquetaState } from 'src/common/pipeline/etiqueta/pipelineEtiqueta';
+import { buildLookupStageHistorialClinico } from 'src/common/pipeline/historialClinico/pipelineHistorialClinico';
 import {
-  buildLookupApoderadoState,
-  projectStageApoderado,
-} from 'src/common/pipeline/apoderado/pipelineApoderado';
-import {
-  buildLookupArchivos,
-  projectStArchivos,
-} from 'src/common/pipeline/archivos/pipelineArchivo';
-import {
-  buildLookupEtiquetaState,
-  projectStageEtiqueta,
-} from 'src/common/pipeline/etiqueta/pipelineEtiqueta';
-import {
-  buildLookupStageHistorialClinico,
-  projectHistorialClinicoState,
-} from 'src/common/pipeline/historialClinico/pipelineHistorialClinico';
+  addFieldsMedicoArchivos,
+  gruopMedicoArchivos,
+  lookupMedicoArchivos,
+  unwindMedicosArchivos,
+} from 'src/common/pipeline/medicos/pipelineMedicos';
 import {
   buildLookUpStateNotas,
-  projectStageNota,
   unwindNotasStage,
 } from 'src/common/pipeline/notas/pipelineNota';
 import { projectStagePaciente } from 'src/common/pipeline/paciente/pipelinePaciente';
 import {
+  addFieldsPrescripcionesMedicos,
   buildLookupStagePrescripciones,
-  projectStatePrescripciones,
+  groupPrescripcionesMedicos,
+  lookUpPrescripcionesMedicos,
+  unwindPrescripciones,
 } from 'src/common/pipeline/prescripciones/pipelinePrescripciones';
-import { buildLookupStageRecetaMedica } from 'src/common/pipeline/recetaMedica/pipelineRecetaMedica';
+import {
+  addFieldsRecetaMedica,
+  buildLookupStageRecetaMedica,
+  groupRecetaMedica,
+  lookRecetaMedica,
+  unwindRecetaMedicaStage,
+} from 'src/common/pipeline/recetaMedica/pipelineRecetaMedica';
 import { AggregateQuery } from 'src/common/utils/agreggate/agreggate';
 import { Paciente } from '../../entities/paciente.entity';
 import {
@@ -54,36 +55,48 @@ export class PacienteFindService implements PacienteFind {
     await this.verifyId(id);
 
     const pipeline: PipelineStage[] = AggregateQuery.pipeline(
-      {
-        $match: { _id: new Types.ObjectId(id) },
-      },
-      projectStagePaciente,
-      ...buildLookupArchivos,
-
-      projectStArchivos,
-
-      ...buildLookupApoderadoState,
-      projectStageApoderado,
-
-      ...buildLookupEtiquetaState,
-      projectStageEtiqueta,
-
+      { $match: { _id: new Types.ObjectId(id) } },
       ...buildLookupStageHistorialClinico,
-      projectHistorialClinicoState,
-
+      ...buildLookupApoderadoState,
+      ...buildLookupStateAlergias,
+      ...buildLookUpStateNotas,
+      ...buildLookupEtiquetaState,
+      ...buildLookupStageRecetaMedica,
+      ...buildLookupArchivos,
       ...buildLookupStagePrescripciones,
 
-      projectStatePrescripciones,
-
-      ...buildLookupStageRecetaMedica,
-
-      ...buildLookupStateAlergias,
-      projectAlergiasState,
+      // Descomponer el array de prescripciones
+      unwindPrescripciones,
       unwindAlergiasStage,
-
-      ...buildLookUpStateNotas,
-      projectStageNota,
       unwindNotasStage,
+      unwindPrescripciones,
+
+      // Hacer el lookup para obtener los datos del médico en prescripciones
+      lookUpPrescripcionesMedicos,
+      // Reemplazar el campo del medico en prescripciones con el objeto del médico
+      addFieldsPrescripcionesMedicos,
+
+      // Volver a agrupar las prescripciones en un array
+      groupPrescripcionesMedicos,
+
+      // Estoy poniendo en orden, si no no funcionara importante
+      // Descomponer el array de recetaMedica
+      // SI no se descomponne, se un array de arrays
+      unwindRecetaMedicaStage,
+      lookRecetaMedica,
+      addFieldsRecetaMedica,
+      // Volver a agrupar las recetaMedica en un array
+      groupRecetaMedica,
+
+      // tiene que ir en orden
+      unwindMedicosArchivos,
+      // Volver a agrupar los archivos en un array
+      lookupMedicoArchivos,
+      addFieldsMedicoArchivos,
+      gruopMedicoArchivos,
+
+      // Pacientes datos omitidos
+      projectStagePaciente,
     );
     const query = await this.pacienteRepository.aggregate(pipeline);
     return query[0];

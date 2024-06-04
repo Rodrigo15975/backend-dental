@@ -11,26 +11,8 @@ export class ApoderadoController {
     return this.apoderadoService.create(createApoderadoDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.apoderadoService.findAll();
-  // }
-
   @Get(':dni')
   findOne(@Param('dni') dni: string) {
     return this.apoderadoService.findByDni(dni);
   }
-
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateApoderadoDto: UpdateApoderadoDto,
-  // ) {
-  //   return this.apoderadoService.update(+id, updateApoderadoDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.apoderadoService.remove(+id);
-  // }
 }

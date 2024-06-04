@@ -22,6 +22,18 @@ import {
   SchemaConsultorio,
 } from 'src/modules/consultario/entities/consultario.entity';
 import {
+  DetallesServicio,
+  SchemaDetallesServicio,
+} from 'src/modules/detalles-servicios/entities/detalles-servicio.entity';
+import {
+  Detalle,
+  SchemaDetalle,
+} from 'src/modules/detalles/entities/detalle.entity';
+import {
+  EstadoServicio,
+  SchemaEstadoServicio,
+} from 'src/modules/estado-servicio/entities/estado-servicio.entity';
+import {
   Etiqueta,
   SchemaEtiquetas,
 } from 'src/modules/etiquetas/entities/etiqueta.entity';
@@ -71,6 +83,18 @@ import {
     }),
 
     MongooseModule.forFeature([
+      {
+        name: Detalle.name,
+        schema: SchemaDetalle,
+      },
+      {
+        name: EstadoServicio.name,
+        schema: SchemaEstadoServicio,
+      },
+      {
+        name: DetallesServicio.name,
+        schema: SchemaDetallesServicio,
+      },
       {
         name: Paciente.name,
         schema: SchemaPaciente,

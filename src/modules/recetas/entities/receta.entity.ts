@@ -1,17 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { Medico } from 'src/modules/medicos/entities/medico.entity';
 
 @Schema({
   timestamps: true,
   collection: 'recetas',
 })
-export class Receta {
+export class Receta extends Document {
   @Prop({
     ref: Medico.name,
     type: Types.ObjectId,
-    required: true,
-    trim: true,
   })
   medico: Medico;
 

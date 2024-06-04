@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import {
   CreateServicioDto,
   PropsCreateServicioDto,
@@ -7,16 +8,14 @@ import {
   SERVICIO_REPOSITORY,
   ServicioRepository,
 } from '../../repository/servicio-repository';
-import { ServicioFindService } from '../find/find.service';
 import { ServiciosCreate } from './types/typesCreate';
-import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 
 @Injectable()
 export class ServicioCreateService implements ServiciosCreate {
   constructor(
     @Inject(SERVICIO_REPOSITORY)
     private readonly servicioRepository: ServicioRepository,
-    private readonly findServicio: ServicioFindService,
+
     private readonly handleErrors: HandleErrors,
   ) {}
 

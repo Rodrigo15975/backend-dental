@@ -29,4 +29,8 @@ export class ServicioUpdateService implements ServicioUpdate {
     });
     this.handleErros.handleSendMessage('Actualización exitosa');
   }
+
+  async addCountByService(id: string): Promise<void> {
+    await this.servicioRepository.addCountByService(id);
+  }
 }

@@ -4,6 +4,7 @@ import { Persona } from 'src/class/Persona';
 import { Alergia } from 'src/modules/alergias/entities/alergia.entity';
 import { Apoderado } from 'src/modules/apoderado/entities/apoderado.entity';
 import { Archivo } from 'src/modules/archivos/entities/archivo.entity';
+import { DetallesServicio } from 'src/modules/detalles-servicios/entities/detalles-servicio.entity';
 import { Etiqueta } from 'src/modules/etiquetas/entities/etiqueta.entity';
 import { HistorialClinica } from 'src/modules/historial-clinica/entities/historial-clinica.entity';
 import { Nota } from 'src/modules/nota/entities/nota.entity';
@@ -69,6 +70,12 @@ export class Paciente extends Persona {
   })
   mayorEdad: boolean;
 
+  @Prop({ trim: true })
+  fechaRegistro: string;
+
+  @Prop({ trim: true })
+  horaRegistro: string;
+
   @Prop([
     {
       type: Types.ObjectId,
@@ -80,16 +87,18 @@ export class Paciente extends Persona {
   @Prop([
     {
       type: Types.ObjectId,
-      ref: Prescripciones.name,
+      ref: DetallesServicio.name,
+    },
+  ])
+  historialPaciente: DetallesServicio[];
+
+  @Prop([
+    {
+      type: Types.ObjectId,
+      ref: Receta.name,
     },
   ])
   recetaMedica: Receta[];
-
-  @Prop({ trim: true })
-  fechaRegistro: string;
-
-  @Prop({ trim: true })
-  horaRegistro: string;
 
   @Prop([
     {

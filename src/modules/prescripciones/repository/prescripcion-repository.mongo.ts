@@ -21,6 +21,9 @@ export class PrescripcionesRepositoryMongo implements PrescripcionesRepository {
     return result as T;
   }
 
+  async delete(id: string): Promise<void> {
+    await this.prescripcionesModel.findByIdAndDelete(id);
+  }
   async findAll(): Promise<Prescripciones[]> {
     return await this.prescripcionesModel.find();
   }

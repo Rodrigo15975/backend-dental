@@ -17,6 +17,7 @@ import {
 } from '../../repository/medico-repository';
 import { MedicoFind } from './types/typesFind';
 import { lookupAsistenciaStage } from 'src/common/pipeline/asistencia/pipelineAsistencia';
+import { PropsCreateServicioDto } from 'src/modules/servicios/dto/create-servicio.dto';
 
 @Injectable()
 export class MedicoFindService implements MedicoFind {
@@ -25,6 +26,11 @@ export class MedicoFindService implements MedicoFind {
     private readonly medicoRepository: MedicoRepository,
     private readonly handleErrors: HandleErrors,
   ) {}
+
+  async findAllServices(id: string): Promise<PropsCreateServicioDto[]> {
+    const medico = await this.findById(id);
+    return medico.servicios;
+  }
 
   async findAuthByMedico(identifier: string): Promise<Medico> {
     const email = generalValidation.matchesEmail.test(identifier);

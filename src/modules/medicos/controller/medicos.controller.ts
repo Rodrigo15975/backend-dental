@@ -38,15 +38,22 @@ export class MedicosController {
   findAll() {
     return this.medicosService.findAll();
   }
+
   @Get(':id')
   findByMedico(@Param('id') id: string) {
     return this.medicosService.findById(id);
+  }
+
+  @Get('servicios/:id')
+  getServices(@Param('id') id: string) {
+    return this.medicosService.findAllServices(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMedicoDto: UpdateMedicoDto) {
     return this.medicosService.update(id, updateMedicoDto);
   }
+
   @Patch('servicios/:id')
   updateServicesMedico(
     @Param('id') id: string,

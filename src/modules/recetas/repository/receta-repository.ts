@@ -5,4 +5,5 @@ export const RECETA_REPOSITORY = 'RecetaRepository';
 
 export interface RecetaRepository {
   create(createRecetaDto: CreateRecetaDto): Promise<Receta>;
+  delete(id: string): Promise<void>;
 }

@@ -10,7 +10,9 @@ export class RecetaRepositoryMongo implements RecetaRepository {
   constructor(
     @InjectModel(Receta.name) private readonly modelReceta: Model<Receta>,
   ) {}
-
+  async delete(id: string): Promise<void> {
+    await this.modelReceta.findByIdAndDelete(id);
+  }
   async create(createRecetaDto: CreateRecetaDto): Promise<Receta> {
     return await this.modelReceta.create(createRecetaDto);
   }
