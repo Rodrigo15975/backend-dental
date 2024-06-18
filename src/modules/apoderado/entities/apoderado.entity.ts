@@ -34,21 +34,21 @@ export class Apoderado extends Document {
 
   @Prop({
     trim: true,
-    required: true,
+    // required: true,
     lowercase: true,
   })
   celular: string;
 
   @Prop({
     trim: true,
-    required: true,
+    // required: true,
     lowercase: true,
   })
   email: string;
 
   @Prop({
     trim: true,
-    required: true,
+    // required: true,
     lowercase: true,
   })
   fuenteCaptacion: string;

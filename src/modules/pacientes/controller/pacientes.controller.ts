@@ -34,8 +34,13 @@ export class PacientesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pacientesService.findOne(id);
+  findById(@Param('id') id: string) {
+    return this.pacientesService.findById(id);
+  }
+
+  @Get('dni/:dni')
+  getFindByDni(@Param('dni') dni: string) {
+    return this.pacientesService.findByDni(dni);
   }
 
   @Patch(':id')

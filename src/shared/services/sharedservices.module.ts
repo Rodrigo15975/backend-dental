@@ -85,6 +85,7 @@ import { ApoderadoService } from 'src/modules/apoderado/services/apoderado.servi
 import { ApoderadoCreateService } from 'src/modules/apoderado/services/create/create.service';
 import { ApoderadoDeleteService } from 'src/modules/apoderado/services/delete/delete.service';
 import { ApoderadoFindService } from 'src/modules/apoderado/services/find/find.service';
+import { ApoderadoUpdateService } from 'src/modules/apoderado/services/update/update.service';
 // dni api
 import { ApiDniService } from 'src/services/apis/dni/api-dni.service';
 // etiqueta
@@ -123,21 +124,40 @@ import { PacientesService } from 'src/modules/pacientes/services/pacientes.servi
 import { PacienteUpdateService } from 'src/modules/pacientes/services/update/update.service';
 
 // detalles-servicios
-import { DetallesServiciosRepositoryMongo } from 'src/modules/detalles-servicios/repository/detalles-servicios-repository-mongo';
-import { DetallesServiciosService } from 'src/modules/detalles-servicios/services/detalles-servicios.service';
-// estado-servicio
 import { DETALLES_SERVICIO_REPOSITORY } from 'src/modules/detalles-servicios/repository/detalles-servicios-repository';
+import { DetallesServiciosRepositoryMongo } from 'src/modules/detalles-servicios/repository/detalles-servicios-repository-mongo';
 import { DetallesServicioCreateService } from 'src/modules/detalles-servicios/services/create/create.service';
 import { DetallesServicioDeleteService } from 'src/modules/detalles-servicios/services/delete/delete.service';
+import { DetallesServiciosService } from 'src/modules/detalles-servicios/services/detalles-servicios.service';
 import { DetallesCreateService } from 'src/modules/detalles/services/create/create.service';
+
+// estado-servicio
 import { ESTADO_SERVICIO_REPOSITORY } from 'src/modules/estado-servicio/repository/estado-servicio-repository';
 import { EstadoServicioRepositoryMongo } from 'src/modules/estado-servicio/repository/estado-servicio-repository-mongo';
 import { EstadoServicioCreateService } from 'src/modules/estado-servicio/services/create/create.service';
 import { EstadoServicioDeleteService } from 'src/modules/estado-servicio/services/delete/delete.service';
 import { EstadoServicioService } from 'src/modules/estado-servicio/services/estado-servicio.service';
 import { EstadoServicioFindService } from 'src/modules/estado-servicio/services/find/find.service';
+// Detalles
 import { DETALLE_REPOSITORY } from 'src/modules/detalles/repository/detalle-repositor';
 import { DetalleRepositoryMongo } from 'src/modules/detalles/repository/detalle-repository-mongo';
+import { DetallesDeleteService } from 'src/modules/detalles/services/delete/delete.service';
+import { DetallesUpdateService } from 'src/modules/detalles/services/update/update.service';
+//
+import { ESTADO_CITA_REPOSITORY } from 'src/modules/estado-cita/repository/estado-cita-repository';
+import { EstadoCitaRepositoryMongo } from 'src/modules/estado-cita/repository/estado-cita-repository-mongo';
+import { EstadoCitaCreateService } from 'src/modules/estado-cita/services/create/create.service';
+import { EstadoCitaService } from 'src/modules/estado-cita/services/estado-cita.service';
+import { EstadoCitaFindService } from 'src/modules/estado-cita/services/find/find.service';
+//
+import { CitasService } from 'src/modules/citas/services/citas.service';
+import { CitaCreateService } from 'src/modules/citas/services/create/create.service';
+import { CITA_REPOSITORY } from 'src/modules/citas/repository/cita-repository';
+import { CitaRepositoryMongo } from 'src/modules/citas/repository/cita-repository-mongo';
+import { CitaFindService } from 'src/modules/citas/services/find/find.service';
+import { CitasUpdateService } from 'src/modules/citas/services/update/update.service';
+import { CitaDeleteService } from 'src/modules/citas/services/delete/delete.service';
+//
 
 @Module({
   imports: [
@@ -148,6 +168,26 @@ import { DetalleRepositoryMongo } from 'src/modules/detalles/repository/detalle-
     HandleErrors,
   ],
   providers: [
+    // Cita
+    CitasService,
+    CitaFindService,
+    CitasUpdateService,
+    CitaDeleteService,
+    CitaCreateService,
+    {
+      provide: CITA_REPOSITORY,
+      useClass: CitaRepositoryMongo,
+    },
+
+    // Estado cita
+    EstadoCitaService,
+    EstadoCitaCreateService,
+    EstadoCitaFindService,
+    {
+      provide: ESTADO_CITA_REPOSITORY,
+      useClass: EstadoCitaRepositoryMongo,
+    },
+
     // estado-tratamiento
     EstadoServicioService,
     EstadoServicioCreateService,
@@ -160,6 +200,8 @@ import { DetalleRepositoryMongo } from 'src/modules/detalles/repository/detalle-
 
     // detalles
     DetallesCreateService,
+    DetallesDeleteService,
+    DetallesUpdateService,
     {
       provide: DETALLE_REPOSITORY,
       useClass: DetalleRepositoryMongo,
@@ -224,6 +266,7 @@ import { DetalleRepositoryMongo } from 'src/modules/detalles/repository/detalle-
     ApoderadoFindService,
     ApoderadoDeleteService,
     ApoderadoCreateService,
+    ApoderadoUpdateService,
     {
       provide: APODERADO_REPOSITORY,
       useClass: ApoderadoRepositoryMongo,
@@ -309,6 +352,18 @@ import { DetalleRepositoryMongo } from 'src/modules/detalles/repository/detalle-
   ],
 
   exports: [
+    // Cita
+    CitasService,
+    CitasUpdateService,
+    CitaFindService,
+    CitaDeleteService,
+    CitaCreateService,
+
+    // Estado cita
+    EstadoCitaService,
+    EstadoCitaCreateService,
+    EstadoCitaFindService,
+
     // estado-tratamiento
     EstadoServicioService,
     EstadoServicioCreateService,
@@ -317,6 +372,8 @@ import { DetalleRepositoryMongo } from 'src/modules/detalles/repository/detalle-
 
     // detalles
     DetallesCreateService,
+    DetallesDeleteService,
+    DetallesUpdateService,
 
     // detalles-servicios
     DetallesServicioCreateService,
@@ -360,6 +417,7 @@ import { DetalleRepositoryMongo } from 'src/modules/detalles/repository/detalle-
     ApoderadoFindService,
     ApoderadoCreateService,
     ApoderadoDeleteService,
+    ApoderadoUpdateService,
 
     // historial-clinico
     HistorialClinicaService,

@@ -1,12 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PipelineStage, Types } from 'mongoose';
+import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import {
   buildLookupStateAlergias,
   unwindAlergiasStage,
-} from 'src/common/alergia/pipelineAlergia';
-import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
+} from 'src/common/pipeline/alergia/pipelineAlergia';
 import { buildLookupApoderadoState } from 'src/common/pipeline/apoderado/pipelineApoderado';
 import { buildLookupArchivos } from 'src/common/pipeline/archivos/pipelineArchivo';
+import {
+  addFieldsDetallesEstadoTratamiento,
+  addFieldsDetallesMedicos,
+  buildLookupStageDetalles,
+  groupDetalles,
+  lookUpDetallesEstadoTratamiento,
+  lookUpDetallesMedicos,
+  unwindDetallesState,
+} from 'src/common/pipeline/detalles/pipelineDetalles';
+import {
+  buildLookupStageDetallesServicios,
+  groupDetallesServicios,
+  unwindDetallesServiciosState,
+} from 'src/common/pipeline/detallesServicios/pipelineDetallesServicios';
 import { buildLookupEtiquetaState } from 'src/common/pipeline/etiqueta/pipelineEtiqueta';
 import { buildLookupStageHistorialClinico } from 'src/common/pipeline/historialClinico/pipelineHistorialClinico';
 import {
@@ -41,6 +55,15 @@ import {
   PacienteRepository,
 } from '../../repository/paciente-repository';
 import { PacienteFind } from './types/typesFind';
+import {
+  addFieldsDetallesCita,
+  addFieldsDetallesCitaEstado,
+  buildLookupStageCitas,
+  groupCitas,
+  lookUpCitasMedicos,
+  lookUpDetallesCitaEstado,
+  unwindDetallesCitas,
+} from 'src/common/pipeline/citas/pipelineCitas';
 @Injectable()
 export class PacienteFindService implements PacienteFind {
   constructor(
@@ -56,6 +79,9 @@ export class PacienteFindService implements PacienteFind {
 
     const pipeline: PipelineStage[] = AggregateQuery.pipeline(
       { $match: { _id: new Types.ObjectId(id) } },
+
+      ...buildLookupStageDetalles,
+      ...buildLookupStageDetallesServicios,
       ...buildLookupStageHistorialClinico,
       ...buildLookupApoderadoState,
       ...buildLookupStateAlergias,
@@ -64,12 +90,35 @@ export class PacienteFindService implements PacienteFind {
       ...buildLookupStageRecetaMedica,
       ...buildLookupArchivos,
       ...buildLookupStagePrescripciones,
-
+      ...buildLookupStageCitas,
       // Descomponer el array de prescripciones
       unwindPrescripciones,
       unwindAlergiasStage,
       unwindNotasStage,
       unwindPrescripciones,
+
+      // Citas
+      unwindDetallesCitas,
+      { $sort: { 'citas.createdAt': -1 } },
+      lookUpCitasMedicos,
+      lookUpDetallesCitaEstado,
+      addFieldsDetallesCita,
+      addFieldsDetallesCitaEstado,
+      groupCitas,
+
+      // Detalles
+      unwindDetallesState,
+      { $sort: { 'detalles.createdAt': -1 } },
+      lookUpDetallesMedicos,
+      lookUpDetallesEstadoTratamiento,
+      addFieldsDetallesEstadoTratamiento,
+      addFieldsDetallesMedicos,
+      groupDetalles,
+
+      //DetallesServicios
+      unwindDetallesServiciosState,
+      // addFieldsDetalles,
+      groupDetallesServicios,
 
       // Hacer el lookup para obtener los datos del médico en prescripciones
       lookUpPrescripcionesMedicos,
@@ -90,11 +139,11 @@ export class PacienteFindService implements PacienteFind {
 
       // tiene que ir en orden
       unwindMedicosArchivos,
+      { $sort: { 'archivos.createdAt': -1 } },
       // Volver a agrupar los archivos en un array
       lookupMedicoArchivos,
       addFieldsMedicoArchivos,
       gruopMedicoArchivos,
-
       // Pacientes datos omitidos
       projectStagePaciente,
     );
@@ -124,7 +173,7 @@ export class PacienteFindService implements PacienteFind {
     const paciente = await this.pacienteRepository.findByDni(dni);
     if (!paciente)
       this.handledErrors.handleErrorsNotFoundException(
-        `El ${dni} del paciente no existe`,
+        `El DNI ${dni} del paciente no existe`,
       );
     return paciente;
   }

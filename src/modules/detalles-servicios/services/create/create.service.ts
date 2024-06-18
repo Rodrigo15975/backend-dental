@@ -1,7 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import { ApoderadoCreateService } from 'src/modules/apoderado/services/create/create.service';
-import { CreateDetallesDto } from 'src/modules/detalles/dto/create-detalle.dto';
+import {
+  CreateDetallesDto,
+  CreateTratamientoDto,
+} from 'src/modules/detalles/dto/create-detalle.dto';
 import { DetallesCreateService } from 'src/modules/detalles/services/create/create.service';
+import { Paciente } from 'src/modules/pacientes/entities/paciente.entity';
 import { PacienteFindService } from 'src/modules/pacientes/services/find/find.service';
 import {
   CreateDetallesServicioDtoMayor,
@@ -12,7 +17,6 @@ import {
   DetallesServiciosRepository,
 } from '../../repository/detalles-servicios-repository';
 import { DetallesServicioCreate } from './types/typesCreate';
-import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 
 @Injectable()
 export class DetallesServicioCreateService implements DetallesServicioCreate {
@@ -24,6 +28,84 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
     private readonly apoderadoCreateService: ApoderadoCreateService,
     private readonly handledErrors: HandleErrors,
   ) {}
+
+  async createDetallesTratamiento(data: CreateTratamientoDto, id: string) {
+    const paciente = await this.pacienteFindService.verifyId(id);
+    this.deleteMontoPagadoCero(data);
+
+    const newMontoTotal = this.obtenerNewMontoTotal(data.montoTotal);
+
+    // detalles doc
+    const detallesTratamiento = await this.createTratamientoDetalles({
+      ...data,
+      monto_pagado: newMontoTotal,
+    });
+
+    // detalles-servicios doc
+    const detallesServicioTratamiento =
+      await this.createTratamientoDetallesServicio(data);
+
+    await paciente.updateOne({
+      $push: {
+        detalles: detallesTratamiento._id,
+        detallesServicios: detallesServicioTratamiento._id,
+      },
+    });
+
+    this.handledErrors.handleSendMessage(
+      'Tratamiento registrado correctamente',
+    );
+  }
+  private createByDecimalCost(costo: string): string {
+    return parseFloat(costo).toFixed(2);
+  }
+  private deleteMontoPagadoCero(data: CreateTratamientoDto) {
+    const { monto_pagado } = data;
+    const montoPagadoDecimal = this.createByDecimalCost(monto_pagado);
+    if (montoPagadoDecimal == '0.00') delete data.monto_pagado;
+  }
+  private obtenerNewMontoTotal(montoTotalTexto: string) {
+    const partes = montoTotalTexto.split(':'); // Divide el texto en partes usando ':' como delimitador
+    if (partes.length > 1) return partes[1].trim(); // Convierte la segunda parte de la cadena a un número
+
+    return null; // Devuelve null si no se encuentra el delimitador ':'
+  }
+  private async createTratamientoDetalles(data: CreateTratamientoDto) {
+    const {
+      costo_restante,
+      costo_servicio,
+      estado_tratamiento,
+      fecha_atencion,
+      medico,
+      monto_pagado,
+      servicio,
+      id,
+    } = data;
+
+    return await this.detalleServicioCreate.createTratamientoDetalles(
+      {
+        costo_restante,
+        costo_servicio,
+        estado_tratamiento,
+        fecha_atencion,
+        medico,
+        monto_pagado,
+        servicio,
+      },
+      id,
+    );
+  }
+  private async createTratamientoDetallesServicio(data: CreateTratamientoDto) {
+    const { comentarios, costo_total, montoTotal, fecha_atencion } = data;
+    return await this.detallesServicioRepository.createTratamientoDetallesServicio(
+      {
+        comentarios,
+        costo_total,
+        montoTotal,
+        fecha_atencion,
+      },
+    );
+  }
 
   async createDetallesPacienteMayor(
     data: CreateDetallesServicioDtoMayor,
@@ -38,29 +120,48 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
     const docDetallesServicios =
       await this.detallesServicioRepository.createDetallesPacienteMayor(data);
 
-    for (const detalles of docDetalles) {
-      await docDetallesServicios.updateOne({
-        $push: {
-          detalles_servicios: detalles,
-        },
-      });
-    }
-    await paciente.updateOne({
-      $push: {
-        historialPaciente: docDetallesServicios._id,
-      },
-    });
+    await this.assignPacienteMayorDetallesServicio(
+      paciente,
+      docDetallesServicios._id,
+      docDetalles,
+    );
 
     this.handledErrors.handleSendMessage('Servicios añadido correctamente');
   }
 
   private async createDetalles(data: CreateDetallesDto[]) {
-    const ids: string[] = [];
-    for (const detalles of data) {
-      const doc = await this.detalleServicioCreate.create(detalles);
-      ids.push(doc._id);
-    }
-    return ids;
+    const createPromises = data.map((detalles) =>
+      this.detalleServicioCreate.create(detalles),
+    );
+    const docs = await Promise.all(createPromises);
+    return docs.map((doc) => doc._id) as string[];
+  }
+
+  private async assignPacienteMayorDetallesServicio(
+    paciente: Paciente,
+    idDocDetallesServicio: string,
+    idDocDetalles: string[],
+  ) {
+    await paciente.updateOne({
+      $push: {
+        detallesServicios: idDocDetallesServicio,
+        detalles: { $each: idDocDetalles },
+      },
+    });
+  }
+  private async assignPacienteMenorDetallesServicio(
+    paciente: Paciente,
+    idApoderado: string,
+    idDocDetallesServicio: string,
+    idDocDetalles: string[],
+  ) {
+    await paciente.updateOne({
+      $push: {
+        detallesServicios: idDocDetallesServicio,
+        apoderado: idApoderado,
+        detalles: { $each: idDocDetalles },
+      },
+    });
   }
 
   async createDetallesPacienteMenor(
@@ -78,19 +179,12 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
     const docDetallesServicios =
       await this.detallesServicioRepository.createDetallesPacienteMenor(data);
 
-    for (const detalles of docDetalles) {
-      await docDetallesServicios.updateOne({
-        $push: {
-          detalles_servicios: detalles,
-        },
-      });
-    }
-    await paciente.updateOne({
-      $push: {
-        historialPaciente: docDetallesServicios._id,
-        apoderado: newApoderado._id,
-      },
-    });
+    await this.assignPacienteMenorDetallesServicio(
+      paciente,
+      newApoderado._id,
+      docDetallesServicios._id,
+      docDetalles,
+    );
 
     this.handledErrors.handleSendMessage('Servicios añadido correctamente');
   }

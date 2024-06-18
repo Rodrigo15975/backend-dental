@@ -32,8 +32,11 @@ export class PacientesService {
     return await this.pacienteFindService.findAll();
   }
 
-  async findOne(id: string) {
+  async findById(id: string) {
     return await this.pacienteFindService.findById(id);
+  }
+  async findByDni(dni: string) {
+    return await this.pacienteFindService.findByDni(dni);
   }
 
   async update(id: string, updatePacienteDto: UpdatePacienteDto) {

@@ -3,14 +3,13 @@ import { PipelineStage } from 'mongoose';
 export const projectStageMedico: PipelineStage = {
   $project: {
     contraseña: 0,
-    createdAt: 0,
+
     updatedAt: 0,
     __v: 0,
     'servicios.count': 0,
     'servicios.createdAt': 0,
     'servicios.updatedAt': 0,
     'servicios.__v': 0,
-    'asistencia.createdAt': 0,
     'asistencia.updatedAt': 0,
     'asistencia.__v': 0,
   },
@@ -65,10 +64,14 @@ export const gruopMedicoArchivos: PipelineStage = {
     apoderado: { $first: '$apoderado' },
     mayorEdad: { $first: '$mayorEdad' },
     historialClinico: { $first: '$historialClinico' },
+    detallesServicios: { $first: '$detallesServicios' },
+    detalles: { $first: '$detalles' },
     recetaMedica: { $first: '$recetaMedica' },
     fechaRegistro: { $first: '$fechaRegistro' },
     horaRegistro: { $first: '$horaRegistro' },
     prescripciones: { $first: '$prescripciones' },
+
+    citas: { $first: '$citas' },
     archivos: { $push: '$archivos' },
     fuenteCaptacion: { $first: '$fuenteCaptacion' },
   },

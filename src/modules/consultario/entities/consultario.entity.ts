@@ -22,6 +22,7 @@ export class Consultario {
 
   @Prop({
     trim: true,
+    lowercase: true,
   })
   nombre_comercial: string;
 

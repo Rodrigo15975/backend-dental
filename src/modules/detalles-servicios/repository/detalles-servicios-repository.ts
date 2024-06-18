@@ -1,6 +1,7 @@
 import {
   CreateDetallesServicioDtoMayor,
   CreateDetallesServicioDtoMenor,
+  CreateTratamientoDetallesServicioDto,
 } from '../dto/create-detalles-servicio.dto';
 import { DetallesServicio } from '../entities/detalles-servicio.entity';
 
@@ -16,4 +17,8 @@ export interface DetallesServiciosRepository {
   ): Promise<DetallesServicio>;
 
   delete(id: string): Promise<void>;
+
+  createTratamientoDetallesServicio(
+    data: CreateTratamientoDetallesServicioDto,
+  ): Promise<DetallesServicio>;
 }

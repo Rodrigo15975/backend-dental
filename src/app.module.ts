@@ -22,6 +22,8 @@ import { PacientesModule } from './modules/pacientes/pacientes.module';
 import { DetallesServiciosModule } from './modules/detalles-servicios/detalles-servicios.module';
 import { EstadoServicioModule } from './modules/estado-servicio/estado-servicio.module';
 import { DetallesModule } from './modules/detalles/detalles.module';
+import { EstadoCitaModule } from './modules/estado-cita/estado-cita.module';
+import { CitasModule } from './modules/citas/citas.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { DetallesModule } from './modules/detalles/detalles.module';
     DetallesServiciosModule,
     EstadoServicioModule,
     DetallesModule,
+    EstadoCitaModule,
+    CitasModule,
   ],
   controllers: [],
 })

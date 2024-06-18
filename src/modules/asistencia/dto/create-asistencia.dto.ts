@@ -7,6 +7,8 @@ export class CreateAsistenciaDto {
   @IsDate({ message: 'Fecha: yyyy-MM-dd' })
   fecha: string;
 
+  hora: string;
+
   @IsBoolean({
     message: 'Asistio, solo acepta true or false',
   })

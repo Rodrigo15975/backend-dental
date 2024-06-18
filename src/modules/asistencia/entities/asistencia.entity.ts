@@ -13,6 +13,11 @@ export class Asistencia extends Document {
   fecha: string;
 
   @Prop({
+    trim: true,
+  })
+  hora: string;
+
+  @Prop({
     required: true,
     default: false,
   })

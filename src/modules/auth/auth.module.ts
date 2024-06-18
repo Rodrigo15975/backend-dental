@@ -14,10 +14,8 @@ import { AuthService } from './services/auth.service';
     SharedMongodbModule,
     JwtModule.register({
       secret: env.SECRET_AUTH,
-      signOptions: {
-        // cambiar a mas dias
-        expiresIn: '1d',
-      },
+      // Sin espirar token
+      // signOptions: {},
     }),
   ],
   providers: [AuthJwt, HandleErrors, AuthService],

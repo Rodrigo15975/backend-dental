@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApoderadoService } from '../services/apoderado.service';
 import { CreateApoderadoDto } from '../dto/create-apoderado.dto';
+import { UpdateApoderadoDto } from '../dto/update-apoderado.dto';
 
 @Controller('apoderado')
 export class ApoderadoController {
@@ -9,6 +10,10 @@ export class ApoderadoController {
   @Post()
   create(@Body() createApoderadoDto: CreateApoderadoDto) {
     return this.apoderadoService.create(createApoderadoDto);
+  }
+  @Patch()
+  update(@Body() createApoderadoDto: UpdateApoderadoDto) {
+    return this.apoderadoService.update(createApoderadoDto);
   }
 
   @Get(':dni')

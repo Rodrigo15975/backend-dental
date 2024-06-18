@@ -4,7 +4,10 @@ import { Persona } from 'src/class/Persona';
 import { Alergia } from 'src/modules/alergias/entities/alergia.entity';
 import { Apoderado } from 'src/modules/apoderado/entities/apoderado.entity';
 import { Archivo } from 'src/modules/archivos/entities/archivo.entity';
+import { Cita } from 'src/modules/citas/entities/cita.entity';
+
 import { DetallesServicio } from 'src/modules/detalles-servicios/entities/detalles-servicio.entity';
+import { Detalle } from 'src/modules/detalles/entities/detalle.entity';
 import { Etiqueta } from 'src/modules/etiquetas/entities/etiqueta.entity';
 import { HistorialClinica } from 'src/modules/historial-clinica/entities/historial-clinica.entity';
 import { Nota } from 'src/modules/nota/entities/nota.entity';
@@ -86,11 +89,28 @@ export class Paciente extends Persona {
 
   @Prop([
     {
+      ref: 'Cita',
+      type: Types.ObjectId,
+    },
+  ])
+  citas: Cita[];
+
+  @Prop([
+    {
       type: Types.ObjectId,
       ref: DetallesServicio.name,
     },
   ])
-  historialPaciente: DetallesServicio[];
+  detallesServicios: DetallesServicio[];
+
+  @Prop([
+    {
+      trim: true,
+      type: Types.ObjectId,
+      ref: Detalle.name,
+    },
+  ])
+  detalles: Detalle[];
 
   @Prop([
     {

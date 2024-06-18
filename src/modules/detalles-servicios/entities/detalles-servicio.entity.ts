@@ -1,27 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-import { Detalle } from 'src/modules/detalles/entities/detalle.entity';
+import { Document } from 'mongoose';
 
 @Schema({
   collection: 'detalles-servicios',
+  timestamps: true,
 })
 export class DetallesServicio extends Document {
-  @Prop({
-    trim: true,
-    lowercase: true,
-  })
-  costo_restante: string;
-
-  @Prop({
-    trim: true,
-  })
-  monto_pagado: string;
+  // @Prop({
+  //   trim: true,
+  //   lowercase: true,
+  // })
+  // vuelto_restante: string;
 
   @Prop({
     trim: true,
     lowercase: true,
   })
-  vuelto_restante: string;
+  costo_total: string;
 
   @Prop({
     lowercase: true,
@@ -36,17 +31,9 @@ export class DetallesServicio extends Document {
 
   @Prop({
     trim: true,
+    lowercase: true,
   })
-  costo_total: string;
-
-  @Prop([
-    {
-      trim: true,
-      type: Types.ObjectId,
-      ref: Detalle.name,
-    },
-  ])
-  detalles_servicios: Detalle[];
+  montoTotal: string;
 }
 
 export const SchemaDetallesServicio =

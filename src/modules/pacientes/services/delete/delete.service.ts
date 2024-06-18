@@ -4,6 +4,7 @@ import { AlergiasDeleteService } from 'src/modules/alergias/services/delete/dele
 import { ApoderadoDeleteService } from 'src/modules/apoderado/services/delete/delete.service';
 import { ArchivoDeleteService } from 'src/modules/archivos/services/delete/delete.service';
 import { ArchivoFileService } from 'src/modules/archivos/services/file/file.service';
+import { DetallesServicioDeleteService } from 'src/modules/detalles-servicios/services/delete/delete.service';
 import { HistorialClinicaDeleteService } from 'src/modules/historial-clinica/services/delete/delete.service';
 import { NotasDeleteService } from 'src/modules/nota/services/delete/delete.service';
 import { PrescripcionesDeleteService } from 'src/modules/prescripciones/services/delete/delete.service';
@@ -14,6 +15,8 @@ import {
 } from '../../repository/paciente-repository';
 import { PacienteFindService } from '../find/find.service';
 import { PacienteDelete } from './types/typesDelete';
+import { DetallesDeleteService } from 'src/modules/detalles/services/delete/delete.service';
+import { CitaDeleteService } from 'src/modules/citas/services/delete/delete.service';
 
 @Injectable()
 export class PacienteDeleteService implements PacienteDelete {
@@ -34,27 +37,59 @@ export class PacienteDeleteService implements PacienteDelete {
 
     private readonly prescripcionesDeleteService: PrescripcionesDeleteService,
     private readonly recetaMedica: RecetaMedicaDeleteService,
+
+    private readonly detallesServiciosDelete: DetallesServicioDeleteService,
+    private readonly detallesDelete: DetallesDeleteService,
+
+    private readonly citaServiceDelete: CitaDeleteService,
   ) {}
   // mayor de edad
   async delete(id: string): Promise<void> {
     const paciente = await this.pacienteFindService.findById(id);
 
-    for (const historialClinico of paciente.historialClinico) {
-      await this.deleteAllHistorialClinica(historialClinico._id);
-    }
-    for (const archivos of paciente.archivos) {
+    console.log(paciente);
+
+    return;
+    const deleteDetalles = paciente.detalles.map((detalles) =>
+      this.deleteDetalles(detalles._id),
+    );
+    const deleteDetallesServicios = paciente.detallesServicios.map(
+      (detallesServicios) =>
+        this.deleteDetallesServicios(detallesServicios._id),
+    );
+
+    const deleteHistorialClinico = paciente.historialClinico.map(
+      (historialClinico) =>
+        this.deleteAllHistorialClinica(historialClinico._id),
+    );
+
+    const deleteRecetas = paciente.recetaMedica.map((receta) =>
+      this.deleteRecetas(receta._id),
+    );
+
+    const deletePrescripciones = paciente.prescripciones.map((prescripciones) =>
+      this.deletePrescripciones(prescripciones._id),
+    );
+
+    const deleteArchivos = paciente.archivos.map(async (archivos) => {
       await this.deleteAllArchivos(archivos._id);
       await this.deleteAllFiles(archivos.id_url_archivo, archivos.url_archivo);
-    }
-    for (const receta of paciente.recetaMedica) {
-      await this.deleteRecetas(receta._id);
-    }
+    });
 
-    for (const prescripciones of paciente.prescripciones) {
-      await this.deletePrescripciones(prescripciones._id);
-    }
-    await this.deleteAlergia(paciente.alergia._id);
-    await this.deleteNota(paciente.nota._id);
+    const citas = paciente.citas.map((cita) => this.deleteCitas(cita._id));
+
+    await Promise.all([
+      ...deleteDetallesServicios,
+      ...deleteDetalles,
+      ...deleteHistorialClinico,
+      ...deleteRecetas,
+      ...deletePrescripciones,
+      ...deleteArchivos,
+      ...citas,
+      this.deleteAlergia(paciente.alergia._id),
+      this.deleteNota(paciente.nota._id),
+    ]);
+
     await this.pacienteRepository.delete(id);
     this.handledErrors.handleSendMessage('Paciente eliminado correctamente');
   }
@@ -63,31 +98,62 @@ export class PacienteDeleteService implements PacienteDelete {
   async deletePacienteMenor(id: string): Promise<void> {
     const pacienteMenor = await this.pacienteFindService.findById(id);
 
-    for (const apoderado of pacienteMenor.apoderado) {
-      await this.deleteAllApoderados(apoderado._id);
-    }
+    const deleteDetalles = pacienteMenor.detalles.map((detalles) =>
+      this.deleteDetalles(detalles._id),
+    );
+    const deleteDetallesServicios = pacienteMenor.detallesServicios.map(
+      (detallesServicios) =>
+        this.deleteDetallesServicios(detallesServicios._id),
+    );
 
-    for (const historialClinico of pacienteMenor.historialClinico) {
-      await this.deleteAllHistorialClinica(historialClinico._id);
-    }
+    const deleteApoderados = pacienteMenor.apoderado.map((apoderado) =>
+      this.deleteAllApoderados(apoderado._id),
+    );
 
-    for (const receta of pacienteMenor.recetaMedica) {
-      await this.deleteRecetas(receta._id);
-    }
+    const deleteHistorialClinico = pacienteMenor.historialClinico.map(
+      (historialClinico) =>
+        this.deleteAllHistorialClinica(historialClinico._id),
+    );
 
-    for (const prescripciones of pacienteMenor.prescripciones) {
-      await this.deletePrescripciones(prescripciones._id);
-    }
-    for (const archivos of pacienteMenor.archivos) {
+    const deleteRecetas = pacienteMenor.recetaMedica.map((receta) =>
+      this.deleteRecetas(receta._id),
+    );
+
+    const deletePrescripciones = pacienteMenor.prescripciones.map(
+      (prescripciones) => this.deletePrescripciones(prescripciones._id),
+    );
+
+    const deleteArchivos = pacienteMenor.archivos.map(async (archivos) => {
       await this.deleteAllArchivos(archivos._id);
       await this.deleteAllFiles(archivos.id_url_archivo, archivos.url_archivo);
-    }
+    });
 
-    await this.deleteAlergia(pacienteMenor.alergia._id);
+    const citas = pacienteMenor.citas.map((cita) => this.deleteCitas(cita._id));
 
-    await this.deleteNota(pacienteMenor.nota._id);
+    await Promise.all([
+      ...deleteDetalles,
+      ...deleteDetallesServicios,
+      ...deleteApoderados,
+      ...deleteHistorialClinico,
+      ...deleteRecetas,
+      ...deletePrescripciones,
+      ...deleteArchivos,
+      ...citas,
+      this.deleteAlergia(pacienteMenor.alergia._id),
+      this.deleteNota(pacienteMenor.nota._id),
+    ]);
+
     await this.pacienteRepository.delete(id);
     this.handledErrors.handleSendMessage('Paciente eliminado correctamente');
+  }
+  // De los servicios
+  private async deleteDetalles(id: string) {
+    await this.detallesDelete.delete(id);
+  }
+
+  // informacion de pago
+  private async deleteDetallesServicios(id: string) {
+    await this.detallesServiciosDelete.delete(id);
   }
 
   private async deleteAlergia(id: string) {
@@ -107,6 +173,9 @@ export class PacienteDeleteService implements PacienteDelete {
   }
   private async deleteRecetas(id: string) {
     await this.recetaMedica.delete(id);
+  }
+  private async deleteCitas(id: string) {
+    await this.citaServiceDelete.deleteCitaForPaciente(id);
   }
 
   private async deleteAllHistorialClinica(id: string) {

@@ -49,6 +49,10 @@ export const groupRecetaMedica: PipelineStage = {
     apoderado: { $first: '$apoderado' },
     mayorEdad: { $first: '$mayorEdad' },
     historialClinico: { $first: '$historialClinico' },
+    detallesServicios: { $first: '$detallesServicios' },
+    detalles: { $first: '$detalles' },
+
+    citas: { $first: '$citas' },
     recetaMedica: { $push: '$recetaMedica' },
     fechaRegistro: { $first: '$fechaRegistro' },
     horaRegistro: { $first: '$horaRegistro' },

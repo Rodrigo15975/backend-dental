@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateApoderadoDto } from '../dto/create-apoderado.dto';
 import { Apoderado } from '../entities/apoderado.entity';
 import { ApoderadoRepository } from './apoderado-repository';
+import { UpdateApoderadoDto } from '../dto/update-apoderado.dto';
 
 @Injectable()
 export class ApoderadoRepositoryMongo implements ApoderadoRepository {
@@ -11,6 +12,10 @@ export class ApoderadoRepositoryMongo implements ApoderadoRepository {
     @InjectModel(Apoderado.name)
     private readonly modelApoderado: Model<Apoderado>,
   ) {}
+
+  async update(data: UpdateApoderadoDto, id: string): Promise<void> {
+    await this.modelApoderado.findByIdAndUpdate(id, data, { new: true });
+  }
 
   async deleteAllApoderados(id: string): Promise<void> {
     await this.modelApoderado.findByIdAndDelete(id);

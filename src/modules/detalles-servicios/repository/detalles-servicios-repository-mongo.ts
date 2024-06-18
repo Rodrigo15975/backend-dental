@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import {
   CreateDetallesServicioDtoMayor,
   CreateDetallesServicioDtoMenor,
+  CreateTratamientoDetallesServicioDto,
 } from '../dto/create-detalles-servicio.dto';
 import { DetallesServicio } from '../entities/detalles-servicio.entity';
 import { DetallesServiciosRepository } from './detalles-servicios-repository';
@@ -25,8 +26,15 @@ export class DetallesServiciosRepositoryMongo
   ): Promise<DetallesServicio> {
     return await this.modelDetalles.create(data);
   }
+
   async createDetallesPacienteMenor(
     data: CreateDetallesServicioDtoMenor,
+  ): Promise<DetallesServicio> {
+    return await this.modelDetalles.create(data);
+  }
+
+  async createTratamientoDetallesServicio(
+    data: CreateTratamientoDetallesServicioDto,
   ): Promise<DetallesServicio> {
     return await this.modelDetalles.create(data);
   }

@@ -9,7 +9,7 @@ export class AuthJwt extends PassportStrategy(Strategy, 'auth-jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([AuthJwt.stractJwtRequest]),
       secretOrKey: env.SECRET_AUTH,
-      expiration: true,
+      expiration: false,
     });
   }
 

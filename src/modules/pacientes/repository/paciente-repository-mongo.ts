@@ -61,7 +61,11 @@ export class PacienteRepositoryMongo implements PacienteRepository {
         'fechaRegistro',
         'horaRegistro',
         'mayorEdad',
-      ]);
+        'createdAt',
+      ])
+      .sort({
+        createdAt: -1,
+      });
   }
   async update(
     id: string,
@@ -78,7 +82,9 @@ export class PacienteRepositoryMongo implements PacienteRepository {
     return await this.modelPaciente.findOne({ celular });
   }
   async findByDni(dni: string): Promise<Paciente> {
-    return await this.modelPaciente.findOne({ dni });
+    return await this.modelPaciente
+      .findOne({ dni })
+      .select(['_id', 'name', 'apellidos']);
   }
   async findByEmail(email: string): Promise<Paciente> {
     return await this.modelPaciente.findOne({ email });

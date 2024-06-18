@@ -17,6 +17,7 @@ import {
   Asistencia,
   SchemaAsistencia,
 } from 'src/modules/asistencia/entities/asistencia.entity';
+import { Cita, SchemaCita } from 'src/modules/citas/entities/cita.entity';
 import {
   Consultario,
   SchemaConsultorio,
@@ -29,6 +30,10 @@ import {
   Detalle,
   SchemaDetalle,
 } from 'src/modules/detalles/entities/detalle.entity';
+import {
+  EstadoCita,
+  SchemaEstadoCita,
+} from 'src/modules/estado-cita/entities/estado-cita.entity';
 import {
   EstadoServicio,
   SchemaEstadoServicio,
@@ -83,6 +88,14 @@ import {
     }),
 
     MongooseModule.forFeature([
+      {
+        name: Cita.name,
+        schema: SchemaCita,
+      },
+      {
+        name: EstadoCita.name,
+        schema: SchemaEstadoCita,
+      },
       {
         name: Detalle.name,
         schema: SchemaDetalle,

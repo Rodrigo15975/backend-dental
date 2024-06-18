@@ -63,6 +63,11 @@ export class MedicoFindService implements MedicoFind {
       ...lookupAsistenciaStage,
 
       ...lookupServiciosStage,
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
       projectStageMedico,
     );
     const medicos = await this.aggregateGeneric<Medico[]>(pipeline);
@@ -90,7 +95,7 @@ export class MedicoFindService implements MedicoFind {
   async findByIdMedico(id: string): Promise<Medico> {
     return await this.verifyId(id);
   }
-  private async verifyId(id: string) {
+  async verifyId(id: string) {
     const medico = await this.medicoRepository.findById(id);
     if (!medico)
       this.handleErrors.handleErrorsNotFoundException(

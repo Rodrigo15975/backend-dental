@@ -20,7 +20,9 @@ export class AsistenciaRepositoryMongo implements AsistenciaRepositorio {
     delete updateAsistenciaDto.idMedico;
     return await this.modelAsistencia
       .findByIdAndUpdate(id, updateAsistenciaDto, { new: true })
-      .exec();
+      .sort({
+        createdAt: -1,
+      });
   }
   async create(createAsistenciaDto: CreateAsistenciaDto): Promise<Asistencia> {
     return await this.modelAsistencia.create(createAsistenciaDto);
