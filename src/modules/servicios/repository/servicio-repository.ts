@@ -16,4 +16,6 @@ export interface ServicioRepository {
   findByServiceExisting(nombre: string): Promise<Servicio>;
 
   addCountByService(id: string): Promise<void>;
+
+  findOneServiceTop(): Promise<Servicio>;
 }

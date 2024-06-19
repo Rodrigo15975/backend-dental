@@ -21,6 +21,10 @@ export class ServicioMongoRespository implements ServicioRepository {
     );
   }
 
+  async findOneServiceTop(): Promise<Servicio> {
+    return await this.servicioModel.findOne().sort({ count: -1 }).exec();
+  }
+
   async create(createServiceDto: PropsCreateServicioDto): Promise<Servicio> {
     return await this.servicioModel.create(createServiceDto);
   }
@@ -35,7 +39,7 @@ export class ServicioMongoRespository implements ServicioRepository {
   async findAllServices(): Promise<Servicio[]> {
     return await this.servicioModel
       .find()
-      .select(['costo', 'nombre', '_id'])
+      .select(['costo', 'nombre', '_id', 'count'])
       .exec();
   }
   async findByService(nombre: string): Promise<Servicio> {

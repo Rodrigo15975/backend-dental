@@ -10,6 +10,7 @@ import {
   DetalleRepository,
 } from '../../repository/detalle-repositor';
 import { DetallesCreate } from './types/typesCreate';
+import { PacienteFindService } from 'src/modules/pacientes/services/find/find.service';
 
 @Injectable()
 export class DetallesCreateService implements DetallesCreate {
@@ -20,14 +21,16 @@ export class DetallesCreateService implements DetallesCreate {
     private readonly servicioFindServicio: ServicioFindService,
     private readonly estadoServicioFindService: EstadoServicioFindService,
     private readonly servicioUpdateServicio: ServicioUpdateService,
+    private readonly pacienteFindService: PacienteFindService,
   ) {}
 
   async createTratamientoDetalles(
     data: CreateDetallesDto,
     id: string,
+    idPaciente: string,
   ): Promise<Detalle> {
     const findDoc = await this.detalleRepository.findById(id);
-
+    const paciente = await this.verifyIdPaciente(idPaciente);
     await findDoc.updateOne({
       $set: {
         docClone: true,
@@ -40,7 +43,7 @@ export class DetallesCreateService implements DetallesCreate {
       data.estado_tratamiento,
     );
 
-    return await this.detalleRepository.create({
+    const docDetallesTratamiento = await this.detalleRepository.create({
       ...data,
       estado_tratamiento: estado._id,
       medico: medico._id,
@@ -48,22 +51,31 @@ export class DetallesCreateService implements DetallesCreate {
       servicio: data.servicio,
       costo_servicio: data.costo_servicio,
     });
+
+    await docDetallesTratamiento.updateOne({
+      paciente: paciente._id,
+    });
+
+    return docDetallesTratamiento;
   }
-
-  async create(data: CreateDetallesDto): Promise<Detalle> {
+  private async verifyIdPaciente(idPaciente: string) {
+    return await this.pacienteFindService.verifyId(idPaciente);
+  }
+  async create(data: CreateDetallesDto, idPaciente: string): Promise<Detalle> {
     const medico = await this.medicoFindServicio.findById(data.medico);
-
     const servicio = await this.servicioFindServicio.findById(data.servicio);
+    const paciente = await this.verifyIdPaciente(idPaciente);
 
     const estado = await this.estadoServicioFindService.findById(
       data.estado_tratamiento,
     );
     const montoDecimal = this.createByDecimalCost(data.monto_pagado);
     const costoServicioDecimal = this.createByDecimalCost(data.costo_servicio);
+
     // actualiza el acount del servicio
     await this.servicioUpdateServicio.addCountByService(data.servicio);
 
-    return await this.detalleRepository.create({
+    const docDetalles = await this.detalleRepository.create({
       ...data,
       estado_tratamiento: estado._id,
       medico: medico._id,
@@ -71,6 +83,10 @@ export class DetallesCreateService implements DetallesCreate {
       servicio: servicio.nombre,
       costo_servicio: costoServicioDecimal,
     });
+    await docDetalles.updateOne({
+      paciente: paciente._id,
+    });
+    return docDetalles;
   }
 
   private createByDecimalCost(costo: string): string {

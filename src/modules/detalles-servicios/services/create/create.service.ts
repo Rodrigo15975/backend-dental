@@ -29,6 +29,7 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
     private readonly handledErrors: HandleErrors,
   ) {}
 
+  // Tratamiento del servicio
   async createDetallesTratamiento(data: CreateTratamientoDto, id: string) {
     const paciente = await this.pacienteFindService.verifyId(id);
     this.deleteMontoPagadoCero(data);
@@ -36,10 +37,13 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
     const newMontoTotal = this.obtenerNewMontoTotal(data.montoTotal);
 
     // detalles doc
-    const detallesTratamiento = await this.createTratamientoDetalles({
-      ...data,
-      monto_pagado: newMontoTotal,
-    });
+    const detallesTratamiento = await this.createTratamientoDetalles(
+      {
+        ...data,
+        monto_pagado: newMontoTotal,
+      },
+      id,
+    );
 
     // detalles-servicios doc
     const detallesServicioTratamiento =
@@ -70,7 +74,12 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
 
     return null; // Devuelve null si no se encuentra el delimitador ':'
   }
-  private async createTratamientoDetalles(data: CreateTratamientoDto) {
+
+  // Tratamiento del servicio
+  private async createTratamientoDetalles(
+    data: CreateTratamientoDto,
+    idPaciente: string,
+  ) {
     const {
       costo_restante,
       costo_servicio,
@@ -93,8 +102,11 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
         servicio,
       },
       id,
+      idPaciente,
     );
   }
+
+  // Tratamiento del servicio
   private async createTratamientoDetallesServicio(data: CreateTratamientoDto) {
     const { comentarios, costo_total, montoTotal, fecha_atencion } = data;
     return await this.detallesServicioRepository.createTratamientoDetallesServicio(
@@ -106,7 +118,7 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
       },
     );
   }
-
+  // Detalles, antes del tratamiento
   async createDetallesPacienteMayor(
     data: CreateDetallesServicioDtoMayor,
     id: string,
@@ -115,7 +127,7 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
 
     const paciente = await this.pacienteFindService.verifyId(id);
 
-    const docDetalles = await this.createDetalles(detalles_servicio);
+    const docDetalles = await this.createDetalles(detalles_servicio, id);
 
     const docDetallesServicios =
       await this.detallesServicioRepository.createDetallesPacienteMayor(data);
@@ -129,14 +141,16 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
     this.handledErrors.handleSendMessage('Servicios añadido correctamente');
   }
 
-  private async createDetalles(data: CreateDetallesDto[]) {
+  // Detalles, antes del tratamiento
+  private async createDetalles(data: CreateDetallesDto[], idPaciente: string) {
     const createPromises = data.map((detalles) =>
-      this.detalleServicioCreate.create(detalles),
+      this.detalleServicioCreate.create(detalles, idPaciente),
     );
     const docs = await Promise.all(createPromises);
     return docs.map((doc) => doc._id) as string[];
   }
 
+  // Detalles, antes del tratamiento
   private async assignPacienteMayorDetallesServicio(
     paciente: Paciente,
     idDocDetallesServicio: string,
@@ -149,6 +163,7 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
       },
     });
   }
+  // Detalles, antes del tratamiento
   private async assignPacienteMenorDetallesServicio(
     paciente: Paciente,
     idApoderado: string,
@@ -164,6 +179,7 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
     });
   }
 
+  // Detalles, antes del tratamiento
   async createDetallesPacienteMenor(
     data: CreateDetallesServicioDtoMenor,
     id: string,
@@ -172,7 +188,7 @@ export class DetallesServicioCreateService implements DetallesServicioCreate {
 
     const paciente = await this.pacienteFindService.verifyId(id);
 
-    const docDetalles = await this.createDetalles(detalles_servicio);
+    const docDetalles = await this.createDetalles(detalles_servicio, id);
 
     const newApoderado = await this.apoderadoCreateService.create(apoderado);
 

@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Paciente } from '../entities/paciente.entity';
 import { Model, PipelineStage } from 'mongoose';
-import { PacienteRepository } from './paciente-repository';
 import {
   CreatePacienteDto,
   CreatePacienteMenorDto,
 } from '../dto/create-paciente.dto';
 import { UpdatePacienteDto } from '../dto/update-paciente.dto';
+import { Paciente } from '../entities/paciente.entity';
+import { monthlyStatsPipeline } from '../../../common/pipeline/paciente/pacientegetMounthPipeline';
+import { PacienteRepository } from './paciente-repository';
+import { MonthlyStats } from '../services/find/types/typesFind';
 
 @Injectable()
 export class PacienteRepositoryMongo implements PacienteRepository {
@@ -17,6 +19,9 @@ export class PacienteRepositoryMongo implements PacienteRepository {
 
   async aggregate(pipeline: PipelineStage[]): Promise<Paciente[]> {
     return await this.modelPaciente.aggregate(pipeline).exec();
+  }
+  async findForMounthStatistics(): Promise<MonthlyStats[]> {
+    return await this.modelPaciente.aggregate(monthlyStatsPipeline);
   }
 
   async findById(id: string): Promise<Paciente> {
@@ -61,6 +66,7 @@ export class PacienteRepositoryMongo implements PacienteRepository {
         'fechaRegistro',
         'horaRegistro',
         'mayorEdad',
+        'fuenteCaptacion',
         'createdAt',
       ])
       .sort({

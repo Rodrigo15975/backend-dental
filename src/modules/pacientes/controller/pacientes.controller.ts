@@ -33,6 +33,16 @@ export class PacientesController {
     return this.pacientesService.findAll();
   }
 
+  @Get('/destacado')
+  findPacienteTop() {
+    return this.pacientesService.findPacienteTop();
+  }
+
+  @Get('stadisticasPacientesNuevos')
+  findForMounthStatistics() {
+    return this.pacientesService.findForMounthStatistics();
+  }
+
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.pacientesService.findById(id);

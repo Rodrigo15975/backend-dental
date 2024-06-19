@@ -47,9 +47,6 @@ export class PacienteDeleteService implements PacienteDelete {
   async delete(id: string): Promise<void> {
     const paciente = await this.pacienteFindService.findById(id);
 
-    console.log(paciente);
-
-    return;
     const deleteDetalles = paciente.detalles.map((detalles) =>
       this.deleteDetalles(detalles._id),
     );

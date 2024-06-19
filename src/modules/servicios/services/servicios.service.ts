@@ -17,6 +17,9 @@ export class ServiciosService {
   async create(createServicioDto: CreateServicioDto) {
     return await this.servicioCreate.create(createServicioDto);
   }
+  async findOneServiceTop() {
+    return await this.servicioFind.findOneServiceTop();
+  }
 
   async findAll() {
     return await this.servicioFind.findAllServices();

@@ -24,6 +24,10 @@ export class ServiciosController {
   findAll() {
     return this.serviciosService.findAll();
   }
+  @Get('destacado')
+  findOneServiceTop() {
+    return this.serviciosService.findOneServiceTop();
+  }
 
   @Patch(':id')
   update(

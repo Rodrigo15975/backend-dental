@@ -157,6 +157,7 @@ import { CitaRepositoryMongo } from 'src/modules/citas/repository/cita-repositor
 import { CitaFindService } from 'src/modules/citas/services/find/find.service';
 import { CitasUpdateService } from 'src/modules/citas/services/update/update.service';
 import { CitaDeleteService } from 'src/modules/citas/services/delete/delete.service';
+import { DetallesFindService } from 'src/modules/detalles/services/find/find.service';
 //
 
 @Module({
@@ -201,6 +202,7 @@ import { CitaDeleteService } from 'src/modules/citas/services/delete/delete.serv
     // detalles
     DetallesCreateService,
     DetallesDeleteService,
+    DetallesFindService,
     DetallesUpdateService,
     {
       provide: DETALLE_REPOSITORY,
@@ -374,6 +376,7 @@ import { CitaDeleteService } from 'src/modules/citas/services/delete/delete.serv
     DetallesCreateService,
     DetallesDeleteService,
     DetallesUpdateService,
+    DetallesFindService,
 
     // detalles-servicios
     DetallesServicioCreateService,

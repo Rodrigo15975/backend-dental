@@ -5,9 +5,10 @@ import {
 import { Detalle } from 'src/modules/detalles/entities/detalle.entity';
 
 export interface DetallesCreate {
-  create(data: CreateDetallesDto): Promise<Detalle>;
+  create(data: CreateDetallesDto, idPaciente: string): Promise<Detalle>;
   createTratamientoDetalles(
     data: CreateTratamientoDto,
     id: string,
+    idPaciente: string,
   ): Promise<Detalle>;
 }

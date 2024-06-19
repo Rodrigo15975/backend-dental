@@ -9,6 +9,7 @@ import { PacienteUpdateService } from './update/update.service';
 import { PacienteFindService } from './find/find.service';
 import { PacienteDeleteService } from './delete/delete.service';
 import { PacienteCreateMenorService } from './create/create-menor.service';
+import { DetallesFindService } from 'src/modules/detalles/services/find/find.service';
 
 @Injectable()
 export class PacientesService {
@@ -18,6 +19,7 @@ export class PacientesService {
     private readonly pacienteFindService: PacienteFindService,
     private readonly pacienteUpdateService: PacienteUpdateService,
     private readonly pacienteCreateMenorService: PacienteCreateMenorService,
+    private readonly detallesFindService: DetallesFindService,
   ) {}
   async create(createPacienteDto: CreatePacienteDto) {
     return await this.pacienteCreateService.create(createPacienteDto);
@@ -28,8 +30,15 @@ export class PacientesService {
     );
   }
 
+  async findPacienteTop() {
+    return await this.detallesFindService.findTopPacienteService();
+  }
+
   async findAll() {
     return await this.pacienteFindService.findAll();
+  }
+  async findForMounthStatistics() {
+    return await this.pacienteFindService.findForMounthStatistics();
   }
 
   async findById(id: string) {

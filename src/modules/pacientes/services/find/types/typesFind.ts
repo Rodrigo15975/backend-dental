@@ -9,4 +9,15 @@ export interface PacienteFind {
   findByExistingCelular(celular: string): Promise<Paciente>;
   findByExistingDni(dni: string): Promise<Paciente>;
   findById(id: string): Promise<Paciente>;
+  findForMounthStatistics(): Promise<MonthlyStats[]>;
+}
+
+export interface MonthlyStats {
+  _id: {
+    year: number;
+    month: number;
+  };
+  count: number;
+  previousCount: number;
+  difference: number;
 }

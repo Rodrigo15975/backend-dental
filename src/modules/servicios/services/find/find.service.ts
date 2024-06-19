@@ -16,6 +16,10 @@ export class ServicioFindService implements ServicioFind {
     private readonly handleErros: HandleErrors,
   ) {}
 
+  async findOneServiceTop(): Promise<Servicio> {
+    return await this.servicioRepository.findOneServiceTop();
+  }
+
   async findById(id: string): Promise<Servicio> {
     const service = await this.servicioRepository.findById(id);
     if (!service)

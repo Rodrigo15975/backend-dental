@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { EstadoServicio } from 'src/modules/estado-servicio/entities/estado-servicio.entity';
 import { Medico } from 'src/modules/medicos/entities/medico.entity';
+import { Paciente } from 'src/modules/pacientes/entities/paciente.entity';
 
 @Schema({
   collection: 'detalles',
@@ -51,6 +52,13 @@ export class Detalle extends Document {
     trim: true,
   })
   monto_pagado: string;
+
+  @Prop({
+    ref: 'Paciente',
+    trim: true,
+    type: Types.ObjectId,
+  })
+  paciente: Paciente;
 }
 
 export const SchemaDetalle = SchemaFactory.createForClass(Detalle);
