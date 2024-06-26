@@ -9,6 +9,6 @@ export interface ArchivoRepository {
     id_url_archivo: string,
     url_archivo: string,
   ): Promise<Archivo>;
-
+  findById(id: string): Promise<Archivo>;
   delete(id: string): Promise<void>;
 }

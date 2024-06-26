@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, PipelineStage } from 'mongoose';
+import { populateOptionsPaciente } from 'src/common/populate/paciente/populate-paciente';
+import { monthlyStatsPipeline } from '../../../common/pipeline/paciente/pacientegetMounthPipeline';
 import {
   CreatePacienteDto,
   CreatePacienteMenorDto,
 } from '../dto/create-paciente.dto';
 import { UpdatePacienteDto } from '../dto/update-paciente.dto';
 import { Paciente } from '../entities/paciente.entity';
-import { monthlyStatsPipeline } from '../../../common/pipeline/paciente/pacientegetMounthPipeline';
-import { PacienteRepository } from './paciente-repository';
 import { MonthlyStats } from '../services/find/types/typesFind';
+import { PacienteRepository } from './paciente-repository';
 
 @Injectable()
 export class PacienteRepositoryMongo implements PacienteRepository {
@@ -17,6 +18,13 @@ export class PacienteRepositoryMongo implements PacienteRepository {
     @InjectModel(Paciente.name) private readonly modelPaciente: Model<Paciente>,
   ) {}
 
+  async findById(id: string): Promise<Paciente> {
+    return await this.modelPaciente
+      .findById(id)
+      .select('-role')
+      .populate(populateOptionsPaciente)
+      .exec();
+  }
   async aggregate(pipeline: PipelineStage[]): Promise<Paciente[]> {
     return await this.modelPaciente.aggregate(pipeline).exec();
   }
@@ -24,9 +32,6 @@ export class PacienteRepositoryMongo implements PacienteRepository {
     return await this.modelPaciente.aggregate(monthlyStatsPipeline);
   }
 
-  async findById(id: string): Promise<Paciente> {
-    return await this.modelPaciente.findById(id).exec();
-  }
   async createPacienteMenor(
     createPacienteDto: CreatePacienteMenorDto,
     idNota: string,
@@ -67,7 +72,9 @@ export class PacienteRepositoryMongo implements PacienteRepository {
         'horaRegistro',
         'mayorEdad',
         'fuenteCaptacion',
+        'celular',
         'createdAt',
+        'fechaNacimiento',
       ])
       .sort({
         createdAt: -1,

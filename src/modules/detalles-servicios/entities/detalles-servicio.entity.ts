@@ -18,6 +18,12 @@ export class DetallesServicio extends Document {
   })
   costo_total: string;
 
+  // @Prop()
+  // createdAt: Date;
+
+  // @Prop()
+  // updatedAt: Date;
+
   @Prop({
     lowercase: true,
     trim: true,

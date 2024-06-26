@@ -11,4 +11,9 @@ export interface DetalleRepository {
   findById(id: string): Promise<Detalle>;
 
   findTopPaciente(): Promise<FindTopPaciente>;
+
+  getServicesReportForDate(
+    fechaInicio: Date,
+    fechaFin: Date,
+  ): Promise<Detalle[]>;
 }

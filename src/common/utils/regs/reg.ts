@@ -1,6 +1,6 @@
 export const generalValidation = {
   matchesLetrasAndNumbers: /^[\sA-ZÁÉÍÓÚÜÑ0-9.,\-/]+$/i,
-  matchesEmail: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+  matchesEmail: /^[a-zA-Z0-9._%+-ñÑ]+@[a-zA-Z0-9.-ñÑ]+\.[a-zA-Z]{2,}$/,
   matchesDNI: /^\d{8}$/,
   matchesPhones: /^[0-9]{9}$/,
   matchesDireccion: /^[\w\d\s.,()-]+$/,

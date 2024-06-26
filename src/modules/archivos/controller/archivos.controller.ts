@@ -1,18 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseInterceptors,
+  Param,
+  Post,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ArchivosService } from '../services/archivos.service';
-import { UpdateArchivoDto } from '../dto/update-archivo.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateArchivoDto } from '../dto/create-archivo.dto';
+import { ArchivosService } from '../services/archivos.service';
 
 @Controller('archivos')
 export class ArchivosController {
@@ -28,23 +25,11 @@ export class ArchivosController {
     return this.archivosService.create(data, file, id);
   }
 
-  @Get()
-  findAll() {
-    return this.archivosService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.archivosService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArchivoDto: UpdateArchivoDto) {
-    return this.archivosService.update(+id, updateArchivoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.archivosService.remove(+id);
+  @Delete(':idDoc/:idPaciente')
+  remove(
+    @Param('idDoc') idDoc: string,
+    @Param('idPaciente') idPaciente: string,
+  ) {
+    return this.archivosService.remove(idDoc, idPaciente);
   }
 }

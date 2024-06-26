@@ -39,7 +39,8 @@ export class ServicioMongoRespository implements ServicioRepository {
   async findAllServices(): Promise<Servicio[]> {
     return await this.servicioModel
       .find()
-      .select(['costo', 'nombre', '_id', 'count'])
+      .select(['costo', 'nombre', '_id', 'count', 'createdAt'])
+      .sort({ createdAt: -1 })
       .exec();
   }
   async findByService(nombre: string): Promise<Servicio> {

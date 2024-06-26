@@ -21,6 +21,11 @@ export class Receta extends Document {
   @Prop({
     trim: true,
   })
+  receta: string;
+
+  @Prop({
+    trim: true,
+  })
   horaReceta: string;
 
   @Prop({

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import { Paciente } from '../../entities/paciente.entity';
-import { queryPaciente } from '../../../../common/pipeline/paciente/PacienteQueryPipeline';
+// import { queryPaciente } from '../../../../common/pipeline/paciente/PacienteQueryPipeline';
 import {
   PACIENTE_REPOSITORY,
   PacienteRepository,
@@ -28,10 +28,11 @@ export class PacienteFindService implements PacienteFind {
     });
   }
   async findById(id: string): Promise<Paciente> {
-    await this.verifyId(id);
-    const pipeline = queryPaciente(id);
-    const query = await this.pacienteRepository.aggregate(pipeline);
-    return query[0];
+    // Se esta utilizando populate,  no aggregate importanate por ahora
+    return await this.verifyId(id);
+    // const pipeline = queryPaciente(id);
+    // const query = await this.pacienteRepository.aggregate(pipeline);
+    // return query[0];
   }
   async verifyId(id: string) {
     const paciente = await this.pacienteRepository.findById(id);

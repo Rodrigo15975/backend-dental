@@ -6,12 +6,30 @@ import { CreateDetallesDto } from '../dto/create-detalle.dto';
 import { Detalle } from '../entities/detalle.entity';
 import { FindTopPaciente } from '../services/find/types/typesFind';
 import { DetalleRepository } from './detalle-repositor';
+import {
+  populateDetalle,
+  selectDetalle,
+} from 'src/common/populate/detalle/populate.detalle';
 
 @Injectable()
 export class DetalleRepositoryMongo implements DetalleRepository {
   constructor(
     @InjectModel(Detalle.name) private readonly modelDetalle: Model<Detalle>,
   ) {}
+
+  async getServicesReportForDate(
+    fechaInicio: Date,
+    fechaFin: Date,
+  ): Promise<Detalle[]> {
+    return this.modelDetalle
+      .find({
+        createdAt: { $gte: fechaInicio, $lte: fechaFin },
+        docClone: false,
+      })
+      .populate(populateDetalle)
+      .select(selectDetalle)
+      .exec();
+  }
 
   async findTopPaciente(): Promise<FindTopPaciente> {
     const paciente = await this.modelDetalle

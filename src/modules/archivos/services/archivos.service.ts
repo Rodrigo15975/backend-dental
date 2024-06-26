@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArchivoDto } from '../dto/create-archivo.dto';
-import { UpdateArchivoDto } from '../dto/update-archivo.dto';
 import { ArchivoCreateService } from './create/create.service';
+import { ArchivoDeleteService } from './delete/delete.service';
 
 @Injectable()
 export class ArchivosService {
-  constructor(private readonly archivoCreateService: ArchivoCreateService) {}
+  constructor(
+    private readonly archivoCreateService: ArchivoCreateService,
+
+    private readonly archivosDeleteService: ArchivoDeleteService,
+  ) {}
   async create(
     createArchivoDto: CreateArchivoDto,
     file: Express.Multer.File,
@@ -14,19 +18,10 @@ export class ArchivosService {
     return await this.archivoCreateService.create(createArchivoDto, file, id);
   }
 
-  findAll() {
-    return `This action returns all archivos`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} archivo`;
-  }
-
-  update(id: number, updateArchivoDto: UpdateArchivoDto) {
-    return updateArchivoDto;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} archivo`;
+  async remove(idDoc: string, idPaciente: string) {
+    return await this.archivosDeleteService.deleteArchivoOnePaciente(
+      idDoc,
+      idPaciente,
+    );
   }
 }

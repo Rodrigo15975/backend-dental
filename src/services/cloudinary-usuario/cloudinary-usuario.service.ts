@@ -12,7 +12,7 @@ export class CloudinaryUsuarioService {
   });
 
   constructor(private readonly config: ConfigService) {}
-  // el usuario es general (medico,usuario)
+  // el usuario es general (medico,usuario,pacientes)
   async uploadFileUsuarios(file: Express.Multer.File) {
     const result = await new Promise<CloudinaryResponse>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
@@ -23,6 +23,7 @@ export class CloudinaryUsuarioService {
       );
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
+
     return result;
   }
   async removeFile(id_perfil: string, url_perfil: string) {

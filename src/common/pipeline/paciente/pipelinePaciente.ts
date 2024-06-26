@@ -25,7 +25,6 @@ export const projectStagePaciente: PipelineStage = {
     'apoderado.updatedAt': 0,
     'apoderado.__v': 0,
 
-    'historialClinico.createdAt': 0,
     'historialClinico.updatedAt': 0,
     'historialClinico.__v': 0,
 

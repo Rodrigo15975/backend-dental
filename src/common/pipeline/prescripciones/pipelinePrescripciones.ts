@@ -52,11 +52,11 @@ export const groupPrescripcionesMedicos: PipelineStage = {
 
     detalles: { $first: '$detalles' },
 
-    citas: { $first: '$citas' },
     recetaMedica: { $first: '$recetaMedica' },
     fechaRegistro: { $first: '$fechaRegistro' },
     horaRegistro: { $first: '$horaRegistro' },
     prescripciones: { $push: '$prescripciones' },
+    citas: { $first: '$citas' },
     archivos: { $first: '$archivos' },
     fuenteCaptacion: { $first: '$fuenteCaptacion' },
   },

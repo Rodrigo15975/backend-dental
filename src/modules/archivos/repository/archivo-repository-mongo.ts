@@ -13,6 +13,10 @@ export class ArchivoRepositoryMongo implements ArchivoRepository {
   async delete(id: string): Promise<void> {
     await this.modelArchivo.findByIdAndDelete(id);
   }
+
+  async findById(id: string): Promise<Archivo> {
+    return await this.modelArchivo.findById(id);
+  }
   async create(
     createArchivoDto: CreateArchivoDto,
     id_url_archivo: string,

@@ -143,6 +143,8 @@ import { DETALLE_REPOSITORY } from 'src/modules/detalles/repository/detalle-repo
 import { DetalleRepositoryMongo } from 'src/modules/detalles/repository/detalle-repository-mongo';
 import { DetallesDeleteService } from 'src/modules/detalles/services/delete/delete.service';
 import { DetallesUpdateService } from 'src/modules/detalles/services/update/update.service';
+import { DetallesFindService } from 'src/modules/detalles/services/find/find.service';
+import { DetalleService } from 'src/modules/detalles/services/detalle.service';
 //
 import { ESTADO_CITA_REPOSITORY } from 'src/modules/estado-cita/repository/estado-cita-repository';
 import { EstadoCitaRepositoryMongo } from 'src/modules/estado-cita/repository/estado-cita-repository-mongo';
@@ -157,7 +159,6 @@ import { CitaRepositoryMongo } from 'src/modules/citas/repository/cita-repositor
 import { CitaFindService } from 'src/modules/citas/services/find/find.service';
 import { CitasUpdateService } from 'src/modules/citas/services/update/update.service';
 import { CitaDeleteService } from 'src/modules/citas/services/delete/delete.service';
-import { DetallesFindService } from 'src/modules/detalles/services/find/find.service';
 //
 
 @Module({
@@ -204,6 +205,7 @@ import { DetallesFindService } from 'src/modules/detalles/services/find/find.ser
     DetallesDeleteService,
     DetallesFindService,
     DetallesUpdateService,
+    DetalleService,
     {
       provide: DETALLE_REPOSITORY,
       useClass: DetalleRepositoryMongo,
@@ -377,6 +379,7 @@ import { DetallesFindService } from 'src/modules/detalles/services/find/find.ser
     DetallesDeleteService,
     DetallesUpdateService,
     DetallesFindService,
+    DetalleService,
 
     // detalles-servicios
     DetallesServicioCreateService,
