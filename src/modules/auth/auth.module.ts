@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { env } from 'process';
+// import { env } from 'process';
 import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import { SharedMongodbModule } from 'src/shared/mongodb/Sharedmongodb.module';
 import { SharedservicesModule } from 'src/shared/services/sharedservices.module';
@@ -13,7 +13,7 @@ import { AuthService } from './services/auth.service';
     SharedservicesModule,
     SharedMongodbModule,
     JwtModule.register({
-      secret: env.SECRET_AUTH,
+      secret: 'AUTH-CLINICA-DENTAL-OCHOA',
       // Sin espirar token
       // signOptions: {},
     }),
