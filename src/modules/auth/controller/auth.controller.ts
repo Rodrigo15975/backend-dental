@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from '../services/auth.service';
 import { AuthData } from '../types/type-auth';
-import { AuthUserGuard } from '../guards/auth-guards';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +13,7 @@ export class AuthController {
     return { auth };
   }
 
-  @UseGuards(AuthUserGuard)
+  // @UseGuards(AuthUserGuard)
   @Get('verify')
   tokenSuccess() {
     return {
@@ -23,13 +22,13 @@ export class AuthController {
       message: 'Verification successful!',
     };
   }
-  @UseGuards(AuthUserGuard)
+  // @UseGuards(AuthUserGuard)
   @Get('profile')
   getId(@Req() req: Request) {
     return req.user;
   }
 
-  @UseGuards(AuthUserGuard)
+  // @UseGuards(AuthUserGuard)
   @Get('logout')
   logout() {
     return { message: 'Sesión cerrada exitosa' };
