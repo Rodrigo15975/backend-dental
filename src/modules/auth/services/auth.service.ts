@@ -3,9 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { HandleErrors } from 'src/common/handleErrors/handle-errorst';
 import { verifyPassword } from 'src/common/utils/argon2/argonHash';
 import { MedicosService } from 'src/modules/medicos/services/medicos.service';
-import { UsuariosService } from 'src/modules/usuarios/services/usuarios.service';
-import { AuthData } from '../types/type-auth';
+import { PacientesService } from 'src/modules/pacientes/services/pacientes.service';
 import { RolesKey } from 'src/modules/roles/entities/default-role';
+import { UsuariosService } from 'src/modules/usuarios/services/usuarios.service';
+import { AuthData, AuthDataPaciente } from '../types/type-auth';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
     private readonly handlesErrors: HandleErrors,
     private readonly usuarioServices: UsuariosService,
     private readonly medicoServices: MedicosService,
+    private readonly pacienteServices: PacientesService,
   ) {}
 
   async signIn(authData: AuthData) {
@@ -22,10 +24,13 @@ export class AuthService {
 
   async authMedicOrUser(auth: AuthData) {
     const { contraseña, identifier } = auth;
+    console.log(auth);
+
     const [usuario, medico] = await Promise.all([
       this.usuarioServices.findAuthByUsuario(identifier),
       this.medicoServices.findAuthByMedico(identifier),
     ]);
+
     if (usuario)
       return await this.authLogin(
         usuario.contraseña,
@@ -58,6 +63,14 @@ export class AuthService {
         'Credenciales incorrectas',
       );
     return await this.getToken(id, role);
+  }
+
+  async authPacientes(data: AuthDataPaciente) {
+    const { identifier } = data;
+    const paciente = await this.pacienteServices.findByDni(identifier);
+    const token = await this.getToken(paciente.id, 'PACIENTE');
+
+    return token;
   }
 
   private async getToken(id: string, role: RolesKey) {

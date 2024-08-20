@@ -10,7 +10,7 @@ import {
 import { Request, Response } from 'express';
 import { AuthUserGuard } from '../guards/auth-guards';
 import { AuthService } from '../services/auth.service';
-import { AuthData } from '../types/type-auth';
+import { AuthData, AuthDataPaciente } from '../types/type-auth';
 
 @Controller('auth')
 export class AuthController {
@@ -22,11 +22,33 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const auth = await this.authService.signIn(data);
+    // asi envio la cookies para que me reconozca en produccion
     res.cookie('auth', auth, {
       sameSite: 'none',
       secure: true,
     });
     res.send({ auth });
+  }
+
+  @Post('paciente')
+  async authPaciente(
+    @Body() data: AuthDataPaciente,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const auth = await this.authService.authPacientes(data);
+    res.cookie('auth', auth, {
+      sameSite: 'none',
+      secure: true,
+    });
+    res.send({ auth });
+
+    // // asi envio la cookies para que me reconozca en produccion
+    // const auth = await this.authService.signIn(data);
+    // res.cookie('auth', auth, {
+    //   sameSite: 'none',
+    //   secure: true,
+    // });
+    // res.send({ auth });
   }
 
   @UseGuards(AuthUserGuard)
@@ -41,6 +63,8 @@ export class AuthController {
   @UseGuards(AuthUserGuard)
   @Get('profile')
   getId(@Req() req: Request) {
+    console.log(req.user);
+    console.log(req.headers);
     return req.user;
   }
 

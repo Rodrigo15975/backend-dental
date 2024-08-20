@@ -13,9 +13,8 @@ import { AuthService } from './services/auth.service';
     SharedservicesModule,
     SharedMongodbModule,
     JwtModule.register({
-      secret: 'AUTH-CLINICA-DENTAL-OCHOA',
+      secret: 'auth-dental-ochoa',
       // Sin espirar token
-      // signOptions: {},
     }),
   ],
   providers: [AuthJwt, HandleErrors, AuthService],

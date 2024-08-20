@@ -97,7 +97,7 @@ export class PacienteRepositoryMongo implements PacienteRepository {
   async findByDni(dni: string): Promise<Paciente> {
     return await this.modelPaciente
       .findOne({ dni })
-      .select(['_id', 'name', 'apellidos']);
+      .select(['_id', 'name', 'apellidos', 'password']);
   }
   async findByEmail(email: string): Promise<Paciente> {
     return await this.modelPaciente.findOne({ email });
