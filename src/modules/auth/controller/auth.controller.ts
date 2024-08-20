@@ -21,6 +21,7 @@ export class AuthController {
     @Body() data: AuthData,
     @Res({ passthrough: true }) res: Response,
   ) {
+    
     const auth = await this.authService.signIn(data);
     // asi envio la cookies para que me reconozca en produccion
     res.cookie('auth', auth, {
