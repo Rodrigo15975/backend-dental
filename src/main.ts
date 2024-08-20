@@ -14,7 +14,8 @@ async function bootstrap() {
   app.enableCors({
     // tienes que poner credentials, para que reciba del front
     credentials: true,
-    origin: 'http://localhost:5173',
+    origin:
+      'https://66c4e55a08eb9537b2d85fa1--silver-ganache-a17f27.netlify.app',
     // [
     // 'http://localhost:8081',
     // 'http://192.168.1.6:8081',
