@@ -6,20 +6,14 @@ async function bootstrap() {
   // Habilitar el rawBody para stripe
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
-    cors: true,
   });
-  const port = process.env.PORT || 5000;
+  const port = process.env.PORT || 4000;
   app.use(cookie());
   // configurar enableCors
   app.enableCors({
     // tienes que poner credentials, para que reciba del front
     credentials: true,
-    origin:
-      'https://66c4e55a08eb9537b2d85fa1--silver-ganache-a17f27.netlify.app',
-    // [
-    // 'http://localhost:8081',
-    // 'http://192.168.1.6:8081',
-    // ],
+    origin: true,
     methods: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE'],
   });
   app.useGlobalPipes(new ValidationPipe());

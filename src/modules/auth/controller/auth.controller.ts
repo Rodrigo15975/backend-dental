@@ -20,7 +20,7 @@ export class AuthController {
   async login(
     @Body() data: AuthData,
     @Res({ passthrough: true }) res: Response,
-  ) {    
+  ) {
     const auth = await this.authService.signIn(data);
     // asi envio la cookies para que me reconozca en produccion
     res.cookie('auth', auth, {
@@ -63,8 +63,6 @@ export class AuthController {
   @UseGuards(AuthUserGuard)
   @Get('profile')
   getId(@Req() req: Request) {
-    console.log(req.user);
-    console.log(req.headers);
     return req.user;
   }
 
